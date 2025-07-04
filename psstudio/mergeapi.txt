@@ -1,0 +1,8 @@
+Params
+-------------
+mtype:file/json,required
+encoding:encoding of the uploading data(utf-8),required
+
+API
+-----------
+http://localhost:3000/api/projects/5c57e0c38704658e1600f770/merge?mtype=json&encoding=utf-8

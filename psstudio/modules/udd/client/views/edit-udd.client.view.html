@@ -1,0 +1,141 @@
+<h3 id="headcolor">
+    Edit Data Flow
+    <ul class="breadcrumb">
+        <li><a ui-sref="app.udd-view">Data Flow Management</a>
+        </li>
+        <!-- <li ng-repeat="state in $state.$current.path" ng-switch="$last" ng-if="!state.abstract" ng-class="{active: $last}"><a
+                ng-switch-when="false" ui-sref="#{{state.url.format($stateParams)}}">{{state.title}}</a>
+            <span ng-switch-when="true" class="textcol">{{state.title}}</span>
+        </li> -->
+    </ul>
+</h3>
+
+<style>
+    .myIframe {
+        position: relative;
+        padding-bottom: 65.25%;
+        padding-top: 30px;
+        height: 0;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        border: solid black 1px;
+    }
+
+    .myIframe iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+</style>
+<script>
+    $("#myiframe").contents().find("#myContent")
+</script>
+
+<script>
+    $(function () {
+        if (!screenfull.enabled) {
+            return true;
+        }
+        $('#toggl').click(function () {
+            alert('clicked')
+            screenfull.toggle($('#workspace'));
+        });
+    })
+</script>
+
+<section ng-controller="UDDController as controller" ng-init="findOne()" id="tcontroller">
+    <div class="panel panel-default">
+        <div class="panel-heading">Configure Flow Details</div>
+        <div class="panel-body">
+            <form name="uddFlowForm" ng-submit="update(uddFlowForm.$valid)" validate-form="" form-wizard=""
+                validate-form="" steps="2" class="ng-pristine ">
+                <div class="form-wizard wizard-horizontal">
+                    <!-- START wizard steps indicator-->
+                    <!-- <ol class="row" style="display: none;">
+                        <li ng-class="{'active':wizard.active(1)}" class="col-md-3">
+                            <h4>Device Details</h4>
+                            <small class="text-muted">Information of the selected device</small>
+                        </li>
+                        <li ng-class="{'active':wizard.active(2)}" class="col-md-3">
+                            <h4>Flow Details</h4>
+                            <small class="text-muted">Edit Flow information</small>
+                        </li>
+                    </ol> -->
+                    <!-- END wizard steps indicator-->
+                    <!-- START Wizard Step inputs -->
+                    <div id="step1" ng-show="wizard.active(1)">
+                        <fieldset>
+                            <legend>Flow Details</legend>
+                            <!-- START row -->
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">Flow Name</label>
+                                        <input name="name" type="text" data-ng-model="uddFlow.flowName" id="name" class="form-control "
+                                            required="required" placeholder="Enter Flow name" maxlength="80" />
+                                        <span ng-show="formStep1.$submitted &amp;&amp; formStep1.uddFlow.name.$invalid"
+                                            class="text-danger">This field is required</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">Flow Type</label>
+                                        <select name="flowType" id="flowType" class="form-control" data-ng-model="uddFlow.flowType">
+                                            <option value="interceptor" selected>Interceptor</option>
+                                            <option value="direct">Direct</option>
+                                        </select>
+                                        <span ng-show="formStep1.$submitted &amp;&amp; formStep1.flowType.$invalid"
+                                              class="text-danger">This field is required</span>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- END row -->
+                        </fieldset>
+                        <ul class="pager">
+                            <li class="previous">
+                                <a ui-sref="app.udd-view" ng-click="wizard.go(1); ">
+                                    <span>&larr; Previous</span>
+                                </a>
+                            </li>
+                            <li class="next">
+                                <a href="" ng-click="wizard.go(2);refreshEdit()">Next
+                                    <span>&rarr;</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END Wizard Step inputs -->
+                    <!-- START Wizard Step inputs -->
+                    <div id="step2" ng-show="wizard.active(2)">
+
+                        <div class="row col-md-12 form-group">
+                            <div class="btn btn-primary col-md-2" ng-click="wizard.go(1)">
+                                Previous
+                            </div>
+
+                            <button id="save" type="submit" name="saveFlow" class="btn btn-primary col-md-2 pull-right">
+                                Save Flow
+                            </button>
+
+                        </div>
+                        <div class="row col-md-12 form-group">
+                            
+                            <fieldset ng-if="flowURL" class="myIframe">
+                                <iframe id="myiframe" src={{flowURL}} allowFullScreen="true">
+                                </iframe>
+                            </fieldset>
+
+                        </div>
+                        <div ng-show="error" class="text-danger">
+                            <strong ng-bind="error"></strong>
+                        </div>
+                    </div>
+                    <!-- END Wizard Step inputs -->
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

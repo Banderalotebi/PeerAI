@@ -1,0 +1,89 @@
+<h3 id="headcolor">Add User
+    <ul class="breadcrumb">
+        <li><a ui-sref="app.user-view">Users</a>
+        </li>
+        <li ng-repeat="state in $state.$current.path" ng-switch="$last" ng-if="!state.abstract"
+            ng-class="{active: $last}"><a ng-switch-when="false" href="#{{state.url.format($stateParams)}}">{{state.title}}</a>
+            <span ng-switch-when="true" class="textcol">{{state.title}}</span>
+        </li>
+    </ul>
+</h3>
+
+<section ng-controller="UsersController as controller">
+    <form name="userForm" class="form-validate form-horizontal" validate-form="" autocomplete="off"
+        ng-submit="addNewUser(userForm.$valid)">
+        <div class="panel panel-default">
+            <div class="panel panel-body ">
+                <legend>Enter details for new user</legend>
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label>User Type</label>
+                        <select ng-required="true" id="userType" name="userType" class="chosen-select form-control"
+                                data-ng-model="credentials.roles" chosen="" multiple="multiple">
+                            <!--<option value="sudo">Super Admin</option>-->
+                            <!-- <option value="admin">Admin</option> -->
+                            <option value="user" selected>User</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" maxlength="50" id="firstName" name="firstName"
+                               class="form-control" ng-required="true"
+                               data-ng-model="credentials.firstName" placeholder="First Name" focus/>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" maxlength="50" id="lastName" name="lastName"
+                               class="form-control" ng-required="true"
+                               data-ng-model="credentials.lastName" placeholder="Last Name"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" ng-required="true" maxlength="100" id="email" name="email"
+                               class="form-control" ng-pattern="/.+\@.+\..+/"
+                               data-ng-model="credentials.email" placeholder="Email"/>
+                        <span ng-show="form.validateInput('credentials.email', 'pattern')" class="text-danger">
+                            Please enter valid email Id</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" maxlength="50" id="username" name="username"
+                               class="form-control" ng-required="true" minlength="1"
+                               data-ng-model="credentials.username" placeholder="Username"/>
+                    </div>
+                    <div class="form-group" show-errors>
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" maxlength="50" name="newPassword" class="form-control" ng-model="credentials.password" placeholder="New Password" popover="{{popoverMsg}}" popover-trigger="focus" password-validator required>
+                        <div ng-messages="passwordForm.newPassword.$error" role="alert">
+                            <p class="help-block error-text" ng-message="required">Enter a new password.</p>
+                            <div ng-repeat="passwordError in passwordErrors">
+                                <p class="help-block error-text" ng-show="userForm.newPassword.$error.requirements">{{passwordError}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" show-errors>
+                        <label for="verifyPassword">Verify Password</label>
+                        <input type="password" id="verifyPassword" name="verifyPassword" class="form-control" ng-model="passwordDetails.verifyPassword" placeholder="Verify Password" password-verify="credentials.password" required>
+                        <div ng-messages="userForm.verifyPassword.$error" role="alert">
+                            <p class="help-block error-text" ng-message="required">Verify your new password.</p>
+                            <p class="help-block error-text" ng-show=userForm.verifyPassword.$error.passwordVerify>Passwords do not match.</p>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="!userForm.newPassword.$error.required">
+                        <label>Password Requirements</label>
+                        <progressbar value="requirementsProgress" type="{{requirementsColor}}"><span style="color:white; white-space:nowrap;">{{requirementsProgress}}%</span></progressbar>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <div class=" mt">
+                    <button type="submit"
+                           class="mb-sm btn btn-large btn-primary">Create User</button>
+                </div>
+                <div data-ng-show="error" class="text-center text-danger">
+                    <strong data-ng-bind="error"></strong>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>

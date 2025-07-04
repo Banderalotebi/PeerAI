@@ -1,0 +1,58 @@
+<h3 id="headcolor">
+    <div class="pull-right">
+        <a uib-tooltip="Create new user"
+           class="btn btn-labeled btn-success" ui-sref="app.user-create">
+            <span class="btn-label"><i class="fa fa-plus-square"></i></span>New
+        </a>
+
+    </div>
+    <em class="fa fa-users"></em> Users
+    <ul class="breadcrumb">
+        <li ng-repeat="state in $state.$current.path" ng-switch="$last" ng-if="!state.abstract"
+            ng-class="{active: $last}"><a ng-switch-when="false" href="#{{state.url.format($stateParams)}}">{{state.title}}</a>
+            <span ng-switch-when="true" class="textcol">{{state.title}}</span>
+        </li>
+    </ul>
+</h3>
+<section ng-controller="UsersController as controller" ng-init="find()">
+    <toaster-container toaster-options="{'position-class': 'toast-bottom-right'}"></toaster-container>
+    <div class="panel panel-default">
+        <div class="panel-body table-responsive">
+            <table datatable="ng" class="row-border hover">
+                <colgroup>
+                    <col width="20%"/>
+                    <col width="20%"/>
+                    <col width="20%"/>
+                    <col width="20%"/>
+                    <col width="20%"/>
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>User Name</th>
+                    <th>Name</th>
+                    <th>Roles</th>
+                    <th>Email</th>
+                    <th style="text-align: right">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="user in users">
+                    <td><em class="fa fa-user"></em> {{ user.username }}</td>
+                    <td>{{ user.firstName +" "+ user.lastName }}</td>
+                    <td>{{ user.roles}}</td>
+                    <td>{{ user.email }}</td>
+                    <td style="text-align: right">
+                        <a ng-if="user.roles[0]=='user'" uib-tooltip="Edit user details" href="/#!/users/{{user._id}}/edit"
+                           class="btn btn-sm btn-warning">
+                            <i class="fa fa-edit"></i>
+                        </a>&nbsp;&nbsp;&nbsp;
+                        <a uib-tooltip="Remove user" ng-click="remove(user)" class="btn btn-sm btn-danger">
+                            <i class="fa fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

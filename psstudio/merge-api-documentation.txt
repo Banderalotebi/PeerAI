@@ -1,0 +1,42 @@
+#PredictSense Merge Api Documentation:
+
+This api used for appending new data/file into original trained file. which can be used for another training.
+
+Advantage:
+        1. Reduce manual effort to merge two file data for training.
+        2. Model will be more accurate if dataset is large and have more variace.
+        3. Reduce new model creation for each file. By this api data will be merged can be used for training.
+
+API
+-----------
+http://localhost:3000/api/projects/5c57e0c38704658e1600f770/merge?mtype=json&encoding=utf-8
+
+Params
+-------------
+mtype:file/json,required
+encoding:encoding of the uploading data(utf-8),required
+
+How to use: 
+
+there are two ways to use this api:
+
+    1) JSON Format
+    ---------------------
+    [
+        {
+            colName1:colValue1,
+            colName2:colValue2,
+            ...
+            },
+        {
+            colName1:colValue3,
+            colName2:colValue4
+            ...
+            }
+    ]
+    2) upload file
+    ---------------------
+        upload new file to append the content into original trained file and use it for training again.
+
+Note:
+* Always specify the required fields in params.

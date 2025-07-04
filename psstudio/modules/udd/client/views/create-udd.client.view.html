@@ -1,0 +1,313 @@
+<h3 id="headcolor">
+    Create Data Flow
+    <ul class="breadcrumb">
+        <li><a ui-sref="app.udd-view">Data Flow Management</a>
+        </li>
+        <!-- <li ng-repeat="state in $state.$current.path" ng-switch="$last" ng-if="!state.abstract"
+            ng-class="{active: $last}"><a ng-switch-when="false" ui-sref="#{{state.url.format($stateParams)}}">{{state.title}}</a>
+            <span ng-switch-when="true" class="textcol">{{state.title}}</span>
+        </li> -->
+    </ul>
+</h3>
+<!--<script src="https://code.jquery.com/jquery-1.10.2.js"></script>-->
+
+<style>
+    .myIframe {
+        position: relative;
+        padding-bottom: 65.25%;
+        padding-top: 30px;
+        height: 0;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        border: none;
+    }
+
+    .myIframe iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100% !important;
+        height: 100% !important;
+    }
+</style>
+<script>
+    $("#myIframe").contents().find("#myContent")
+</script>
+
+<script>
+    $(function () {
+        if (!screenfull.enabled) {
+            return false;
+        }
+        $('#toggle').click(function () {
+            screenfull.toggle($('#chart')[0]);
+        });
+    })
+</script>
+<section ng-controller="UDDController as controller">
+    <div class="panel panel-default" ng-init="createNewFlow()">
+        <!--<div class="panel-heading">Configure Flow Details</div>-->
+        <!--<h5>Configure Flow details</h5>-->
+        <div class="panel-body form-group" id="maximize">
+            <form name="flowForm" form-wizard="" steps="2" class="form-validate  ng-pristine "
+                  steps="2" validate-steps="true">
+                <div class="form-wizard wizard-horizontal">
+                    <!-- <ol class="row" style="display: none;">
+                        <li ng-class="{'active':wizard.active(1)}" class="col-sm-3">
+                            <h4>Device Details</h4>
+                            <small class="text-muted">Information of the selected device</small>
+                        </li>
+                        <li ng-class="{'active':wizard.active(2)}"
+                            class="col-sm-3">
+                            <h4>Create Flow</h4>
+                            <small class="text-muted">Create flow information</small>
+                        </li>
+                    </ol> -->
+                    <div id="step1" ng-show="wizard.active(1)">
+                        <fieldset ng-form="formStep1">
+                            <legend>Flow Details</legend>
+                            <!-- START row -->
+                            <div class="row">
+                                <!-- <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">Name</label>
+                                        <input type="text" name="device" data-ng-model="device.name" id="device"
+                                               placeholder="Device Name"
+                                               class="form-control" readonly/>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">Device Id</label>
+                                        <input type="text" name="deviceID" data-ng-model="device._id" id="deviceID"
+                                               placeholder="Device ID"
+                                               ng-required="true" class="form-control" readonly/>
+                                    </div>
+                                </div> -->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">Flow Name</label>
+                                        <input name="name" type="text" data-ng-model="flowName" id="name"
+                                               class="form-control " required="required"
+                                               placeholder="Enter Flow name" maxlength="80"/>
+                                        <span ng-show="formStep1.$submitted &amp;&amp; formStep1.name.$invalid"
+                                              class="text-danger">This field is required</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">Flow Type</label>
+                                        <select name="flowType" id="flowType" class="form-control" ng-model="flowType">
+                                            <option value="interceptor" selected>Interceptor</option>
+                                            <option value="direct">Direct</option>
+                                        </select>
+                                        <span ng-show="formStep1.$submitted &amp;&amp; formStep1.flowType.$invalid"
+                                              class="text-danger">This field is required</span>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- END row -->
+                        </fieldset>
+                        <ul class="pager">
+                            <!-- <li class="previous">
+                                <a ui-sref="app.udd-selectDevice" ng-click="wizard.go(1)">
+                                    <span>&larr; Devices</span>
+                                </a>
+                            </li> -->
+                            <li class="next">
+                                <a href="" ng-click="wizard.go(2);refresh();controller.checknone()">Next
+                                    <span>&rarr;</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END Wizard Step inputs -->
+                    <!-- START Wizard Step inputs -->
+                    <div id="step2" ng-show="wizard.active(2)">
+                        <!--<div class="col-md-1 pull-right">-->
+                        <!--<button id="toggl" type="button" name="toggleFullscreen"-->
+                        <!--class=" form-control mb-sm btn btn-info">-->
+                        <!--<span><i class="fa fa-expand"></i></span>-->
+                        <!--</button>-->
+                        <!--</div>-->
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <div class="btn btn-primary col-md-2 form-group" ng-click="wizard.go(1)">
+                                    Previous
+                                </div>
+
+                                <!-- <button id="toggleFS" type='button'  class="btn btn-primary form-group col-md-1 pull-right" ng-click="toggleFS()">
+                                    <span><i class="fa fa-expand"></i></span> -->
+                                </button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <button ng-click="create(flowForm.$valid)" id="save" type="button" name="saveFlow" ng-disabled="controller.checknone()"
+                                        class="btn btn-primary form-group col-md-2 pull-right">
+                                    Save Flow
+                                </button>
+                            </div>
+
+                            <!--<div class="col-md-1 pull-right">-->
+                                <!--<button id="toggle" name="toggleFullscreen" class="btn btn-mb btn-info pull-right">-->
+                                    <!--<span><i class="fa fa-expand"></i></span>-->
+                                <!--</button>-->
+                            <!--</div>-->
+
+                        </div>
+
+                        <!--<div class="col-md-1 pull-right">-->
+                        <!--<button id="toggl" type="button" name="toggleFullscreen"-->
+                        <!--class=" form-control mb-sm btn btn-info">-->
+                        <!--<span><i class="fa fa-expand"></i></span>-->
+                        <!--</button>-->
+                        <!--</div>-->
+                        <!--<div class="pull-right col-md-2">-->
+                        <!--<button id="save" type="submit" name="saveFlow" ng-disabled="checknone()"-->
+                        <!--class="form-control mb-sm btn btn-primary col-md-2">-->
+                        <!--Save Flow-->
+                        <!--</button>-->
+                        <!--</div>-->
+                        <div class="row col-md-12 form-group">
+                        <fieldset class="myIframe col-md-12">
+                                    <iframe id="myiframe" src={{newflowURL}} allowFullScreen="true">
+                                    </iframe>
+                        </fieldset>
+                        </div>
+                            <!--<div class="col-sm-4">-->
+                            <!--<legend>Recent Data Stream</legend>-->
+                            <!--<div id="dataStreamSample" name="dataStreamSample" ng-model="dataStreamSample"-->
+                            <!--ui-refresh="controller.refreshCodemirror"-->
+                            <!--ui-codemirror="{lineNumbers: true, autoFocus:true, theme:'twilight',readOnly: 'true',lineWrapping : true,mode: 'Javascript'}"-->
+                            <!--&gt;-->
+                            <!--</div>-->
+                            <!--</div>-->
+                        <!--<ul class="pager">-->
+                        <!--<li class="previous">-->
+                        <!--<a href="" ng-click="wizard.go(1)">-->
+                        <!--<span>&larr; Previous</span>-->
+                        <!--</a>-->
+                        <!--</li>-->
+                        <!--<li class="next pull-right">-->
+                        <!--<button id="save" type="submit" name="saveFlow"-->
+                        <!--class="form-control mb-sm btn btn-primary col-md-2">-->
+                        <!--Save Flow-->
+                        <!--</button>-->
+                        <!--</li>-->
+                        <!--</ul>-->
+                        <div ng-show="error" class="text-danger">
+                            <strong ng-bind="error"></strong>
+                        </div>
+                    </div>
+                    <!-- END Wizard Step inputs -->
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+
+<!--<section ng-controller="UDDController as controller" ng-init="findAllDevices()">-->
+    <!--<div class="panel panel-primary " ng-init="createNewFlow()">-->
+        <!--<div class="panel panel-heading">-->
+            <!--Unified Data Definition-->
+        <!--</div>-->
+        <!--<div class="panel panel-body">-->
+            <!--<form name="flowForm" class="form-horizontal" ng-submit="create(flowForm.$valid)"-->
+                  <!--validate-form="">-->
+                <!--<div id="chart" class="col-md-12">-->
+                    <!--<div class="row">-->
+                        <!--<div class="row form-group  text-center">-->
+                            <!--<label class="col-md-2 control-label credit">Select Device</label>-->
+                            <!--<div class="pull-left col-md-2">-->
+                                <!--<select name="device" ng-model="device" id="device" focus=""-->
+                                        <!--ng-required="true" ng-change="refresh()" class="form-control">-->
+                                    <!--<option value="" disabled selected>select a device</option>-->
+                                    <!--<option value={{device.name}} required="" ng-repeat="device in devices">-->
+                                        <!--{{device.name}}-->
+                                    <!--</option>-->
+                                <!--</select>-->
+                            <!--</div>-->
+                            <!--<label class="pull-left col-md-2 control-label credit">Flow Name</label>-->
+                            <!--<div class="col-md-2">-->
+                                <!--<input type="text" placeholder="Flow Name" name="name" id="name" ng-required="true"-->
+                                       <!--ng-model="name"-->
+                                       <!--maxlength="50" class="form-control "/>-->
+                            <!--</div>-->
+                            <!--<div class="col-md-1 pull-right">-->
+                                <!--<button id="toggl" type="button" name="toggleFullscreen"-->
+                                        <!--class=" form-control mb-sm btn btn-info">-->
+                                    <!--<span><i class="fa fa-expand"></i></span>-->
+                                <!--</button>-->
+                            <!--</div>-->
+                            <!--<div class="pull-right col-md-2">-->
+                                <!--<button id="save" type="submit" name="saveFlow" ng-disabled="checknone()"-->
+                                        <!--class="form-control mb-sm btn btn-primary col-md-2">-->
+                                    <!--Save Flow-->
+                                <!--</button>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<fieldset class="myIframe" ng-init="createNewFlow()">-->
+                        <!--<iframe id="myiframe" src={{newflowURL}} allowfullscreen>-->
+                        <!--</iframe>-->
+
+                    <!--</fieldset>-->
+                <!--</div>-->
+            <!--</form>-->
+        <!--</div>-->
+        <!--&lt;!&ndash;<div class="panel panel-body">&ndash;&gt;-->
+        <!--&lt;!&ndash;<form role="form" name="uddFlowForm" class="ng-pristine form-validate "&ndash;&gt;-->
+        <!--&lt;!&ndash;ng-submit="update(uddFlowForm.$valid)"&ndash;&gt;-->
+        <!--&lt;!&ndash;validate-form="">&ndash;&gt;-->
+        <!--&lt;!&ndash;<div id="chart" class="col-md-12">&ndash;&gt;-->
+        <!--&lt;!&ndash;<div class="row">&ndash;&gt;-->
+        <!--&lt;!&ndash;<div class="row form-group  text-center">&ndash;&gt;-->
+        <!--&lt;!&ndash;<label class="col-md-2 control-label">Device Name</label>&ndash;&gt;-->
+        <!--&lt;!&ndash;<div class="pull-left col-md-2" title="Device name cannot be edited" ng-init="findAllDevices()">&ndash;&gt;-->
+
+        <!--&lt;!&ndash;<input name="device" type="text" disabled="disabled" ng-model="uddFlow.device" id="device"&ndash;&gt;-->
+        <!--&lt;!&ndash;class="form-control"&ndash;&gt;-->
+        <!--&lt;!&ndash;ng-required="" maxlength="40"&ndash;&gt;-->
+        <!--&lt;!&ndash;placeholder="Device Name" {{device.name}}/>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+        <!--&lt;!&ndash;<label class="pull-left col-md-2 control-label">Flow Name</label>&ndash;&gt;-->
+        <!--&lt;!&ndash;<div class="col-md-2">&ndash;&gt;-->
+        <!--&lt;!&ndash;<input name="name" type="text" data-ng-model="uddFlow.name" id="name"&ndash;&gt;-->
+        <!--&lt;!&ndash;class="form-control " ng-required="true"&ndash;&gt;-->
+        <!--&lt;!&ndash;placeholder="Enter Flow name" maxlength="80"/>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--&lt;!&ndash;<div class="col-md-1 pull-right">&ndash;&gt;-->
+        <!--&lt;!&ndash;<button id="toggl" type="button" name="toggleFullscreen"&ndash;&gt;-->
+        <!--&lt;!&ndash;class=" form-control mb-sm btn btn-info">&ndash;&gt;-->
+        <!--&lt;!&ndash;<span><i class="fa fa-expand"></i></span>&ndash;&gt;-->
+        <!--&lt;!&ndash;</button>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--&lt;!&ndash;<div class="pull-right col-md-2">&ndash;&gt;-->
+        <!--&lt;!&ndash;<button id="save" type="submit" name="saveFlow"&ndash;&gt;-->
+        <!--&lt;!&ndash;class="form-control mb-sm btn btn-primary col-md-2">&ndash;&gt;-->
+        <!--&lt;!&ndash;Save Flow&ndash;&gt;-->
+        <!--&lt;!&ndash;</button>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--&lt;!&ndash;<fieldset class="myIframe">&ndash;&gt;-->
+        <!--&lt;!&ndash;<iframe id="myiframe" src="/!/" allowfullscreen>&ndash;&gt;-->
+        <!--&lt;!&ndash;</iframe>&ndash;&gt;-->
+        <!--&lt;!&ndash;</fieldset>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--&lt;!&ndash;</form>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+    <!--</div>-->
+
+<!--</section>-->
+
+
+<!--&lt;!&ndash;<h3 id="headcolor">Select Device&ndash;&gt;-->
+<!--&lt;!&ndash;<ul class="breadcrumb">&ndash;&gt;-->
+<!--&lt;!&ndash;<li><a ui-sref="app.graphs">Custom Graphs</a>&ndash;&gt;-->
+<!--&lt;!&ndash;</li>&ndash;&gt;-->
+<!--&lt;!&ndash;<li ng-repeat="state in $state.$current.path" ng-switch="$last" ng-if="!state.abstract" ng-class="{active: $last}"><a ng-switch-when="false" href="#{{state.url.format($stateParams)}}">{{state.title}}</a>&ndash;&gt;-->
+<!--&lt;!&ndash;<span ng-switch-when="true" class="textcol">{{state.title}}</span>&ndash;&gt;-->
+<!--&lt;!&ndash;</li>&ndash;&gt;-->
+<!--&lt;!&ndash;</ul>&ndash;&gt;-->
+<!--&lt;!&ndash;</h3>&ndash;&gt;-->
+

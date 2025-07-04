@@ -1,0 +1,10 @@
+flask>=1.0.2
+requests>=2.19.1
+numpy>=1.14.3
+scipy>=1.1.0
+pandas>=0.23.3
+scikit-learn>=0.19.1
+pymongo
+hashids
+tensorflow==2.0.0-alpha0
+keras

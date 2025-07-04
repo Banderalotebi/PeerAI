@@ -1,0 +1,278 @@
+<style>
+    body {
+        /*background-image: url("img/back.jpg");*/
+        /*background-size: cover;*/
+        background: -moz-radial-gradient(center, ellipse cover, #141E30 0%, #000000 100%); /* ff3.6+ */
+        background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, #141E30), color-stop(100%, #000000)); /* safari4+,chrome */
+        background: -webkit-radial-gradient(center, ellipse cover, #141E30 0%, #000000 100%); /* safari5.1+,chrome10+ */
+        background: -o-radial-gradient(center, ellipse cover, #141E30 0%, #000000 100%); /* opera 11.10+ */
+        background: -ms-radial-gradient(center, ellipse cover, #141E30 0%, #000000 100%); /* ie10+ */
+        background: radial-gradient(ellipse at center, #141E30 0%, #000000 100%); /* w3c */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#141E30', endColorstr='#000000',GradientType=1 ); /* ie6-9 */
+        /*background: -moz-radial-gradient(center, ellipse cover, #53346D 0%, #000000 100%); !* ff3.6+ *!*/
+        /*background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, #53346D), color-stop(100%, #000000)); !* safari4+,chrome *!*/
+        /*background: -webkit-radial-gradient(center, ellipse cover, #53346D 0%, #000000 100%); !* safari5.1+,chrome10+ *!*/
+        /*background: -o-radial-gradient(center, ellipse cover, #53346D 0%, #000000 100%); !* opera 11.10+ *!*/
+        /*background: -ms-radial-gradient(center, ellipse cover, #53346D 0%, #000000 100%); !* ie10+ *!*/
+        /*background: radial-gradient(ellipse at center, #53346D 0%, #000000 100%); !* w3c *!*/
+        /*filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#53346D', endColorstr='#000000',GradientType=1 ); !* ie6-9 *!*/
+    }
+    .login h1 { color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3); letter-spacing:1px; text-align:center; }
+
+    input {
+        width: 100%;
+        margin-bottom: 10px;
+        background: rgba(0,0,0,0.3);
+        border: none;
+        outline: none;
+        padding: 10px;
+        font-size: 13px;
+        color: #fff;
+        text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+        border: 1px solid rgba(0,0,0,0.3);
+        border-radius: 4px;
+        box-shadow: inset 0 -5px 45px rgba(100,100,100,0.2), 0 1px 1px rgba(255,255,255,0.2);
+        -webkit-transition: box-shadow .5s ease;
+        -moz-transition: box-shadow .5s ease;
+        -o-transition: box-shadow .5s ease;
+        -ms-transition: box-shadow .5s ease;
+        transition: box-shadow .5s ease;
+    }
+    input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgba(255,255,255,0.2); }
+    #particles-js{
+        /*top: 0;*/
+        height:99vh !important;
+        position: absolute;
+        width: 100%;
+        margin-top: -50px;
+    }
+    .head{
+        padding-top: 5%;
+    }
+</style>
+<div id="particles-js"></div>
+<div class="head" ng-controller="AuthenticationController">
+    <div class="row">
+    <div class="col-xs-offset-2 col-xs-8 col-md-offset-4 col-md-4">
+        <div class="text-center">
+            <img src="img/brand/logo_login.png"/>
+        </div>
+        <!--<h1 class="text-center">Login</h1>-->
+        <form name="userForm" ng-submit="signin(userForm.$valid)" class="signin" novalidate autocomplete="off">
+                <div class="form-group" show-errors>
+                    <!--<label for="username">Username</label>-->
+                    <!--{{userForm.username}}-->
+                    <input type="text" id="username" name="username"
+                           ng-model="credentials.username" placeholder="Username" lowercase required>
+                    <div ng-messages="userForm.username.$error" role="alert">
+                        <p ng-show="userForm.username.$touched" class="help-block error-text"
+                           ng-message="required">Username required</p>
+                    </div>
+                </div>
+                <div class="form-group" show-errors>
+                    <!--<label for="password">Password</label>-->
+                    <input type="password" id="password" name="password"
+                           ng-model="credentials.password" placeholder="Password" required>
+                    <div ng-messages="userForm.password.$error" role="alert">
+                        <p ng-if="userForm.password.$touched" class="help-block error-text"
+                           ng-message="required">Password required</p>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <alert type="danger" ng-show="error" class="text-center text-danger">
+                        <span ng-bind="error"></span>
+                    </alert>
+                </div>
+
+                <div class="text-center form-group">
+                    <button type="submit" class="btn btn-primary ">Sign in</button>
+                </div>
+                <div class="text-center forgot-password">
+                    <!--<a ui-sref="page.password.forgot">Forgot your password?</a>-->
+                </div>
+            <div class="row text-center">
+                <h5 class="login" style="color: #fff !important;">©<a style="color: #d3cb71 !important;"
+                                                                      href="https://www.cryptoriyal.io/" id="winjit"
+                                                                      target='_blank'> CryptoRiyal</a> {{app.year}} - All rights
+                    reserved</h5>
+                <!-- <h5 class="login" style="color: #fff !important;">Powered By<a style="color: #d3cb71 !important;"
+                                                                               href="http://winjit.com"
+                                                                               target='_blank'> Winjit</a></h5> -->
+                <h5 class="text-center" style="color: #fff !important;">Version: {{app.version}}</h5>
+            </div>
+        </form>
+    </div>
+    </div>
+
+    <!--<section>-->
+        <!--<div class="row">-->
+            <!--<div class="col-xs-offset-2 col-xs-8 col-md-offset-4 col-md-4 text-center">-->
+                <!--<img src="img/brand/logo.png"/>-->
+            <!--</div>-->
+            <!--<div class="col-xs-offset-2 col-xs-8 col-md-offset-4 col-md-4 panel b">-->
+                <!--<form name="userForm" ng-submit="signin(userForm.$valid)" class="signin" novalidate autocomplete="off">-->
+                    <!--<div class="panel-body">-->
+                        <!--<div class="panel-heading">-->
+                            <!--<h3 class="col-md-12 text-center">Login</h3>-->
+                        <!--</div>-->
+                        <!--<div class="form-group" show-errors>-->
+                            <!--<label for="username">Username</label>-->
+                            <!--&lt;!&ndash;{{userForm.username}}&ndash;&gt;-->
+                            <!--<input type="text" id="username" name="username" class="form-control"-->
+                                   <!--ng-model="credentials.username" placeholder="Username" lowercase required>-->
+                            <!--<div ng-messages="userForm.username.$error" role="alert">-->
+                                <!--<p ng-show="userForm.username.$touched" class="help-block error-text"-->
+                                   <!--ng-message="required">Username is required.</p>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="form-group" show-errors>-->
+                            <!--<label for="password">Password</label>-->
+                            <!--<input type="password" id="password" name="password" class="form-control"-->
+                                   <!--ng-model="credentials.password" placeholder="Password" required>-->
+                            <!--<div ng-messages="userForm.password.$error" role="alert">-->
+                                <!--<p ng-if="userForm.password.$touched" class="help-block error-text"-->
+                                   <!--ng-message="required">Password is required.</p>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="text-center">-->
+                            <!--<alert type="danger" ng-show="error" class="text-center text-danger">-->
+                                <!--<span ng-bind="error"></span>-->
+                            <!--</alert>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="panel-footer">-->
+                        <!--<div class="text-center form-group">-->
+                            <!--<button type="submit" class="btn btn-primary">Sign in</button>-->
+                        <!--</div>-->
+                        <!--<div class="text-center forgot-password">-->
+                            <!--&lt;!&ndash;<a ui-sref="page.password.forgot">Forgot your password?</a>&ndash;&gt;-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</form>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="row text-center">-->
+            <!--<h5 class="login" style="color: #fff !important;">©<a style="color: #d3cb71 !important;"-->
+                                                                     <!--href="" id="winjit"-->
+                                                                     <!--target='_blank'> PredictSense</a> {{app.year}} - All rights-->
+                <!--reserved</h5>-->
+            <!--<h5 class="login" style="color: #fff !important;">Powered By<a style="color: #d3cb71 !important;"-->
+                                                                              <!--href="http://winjit.com"-->
+                                                                              <!--target='_blank'> Winjit</a></h5>-->
+        <!--</div>-->
+    <!--</section>-->
+</div>
+<script type="application/javascript">
+    /* ---- particles.js config ---- */
+
+    particlesJS("particles-js", {
+        "particles": {
+            "number": {
+                "value": 100,
+                "density": {
+                    "enable": true,
+                    "value_area": 800
+                }
+            },
+            "color": {
+                "value": "#f98a1e"
+            },
+            "shape": {
+                "type": "circle",
+                "stroke": {
+                    "width": 0,
+                    "color": "#000000"
+                },
+                "polygon": {
+                    "nb_sides": 5
+                },
+                "image": {
+                    "src": "img/github.svg",
+                    "width": 100,
+                    "height": 100
+                }
+            },
+            "opacity": {
+                "value": 0.3,
+                "random": false,
+                "anim": {
+                    "enable": true,
+                    "speed": 1,
+                    "opacity_min": 0.1,
+                    "sync": false
+                }
+            },
+            "size": {
+                "value": 3,
+                "random": true,
+                "anim": {
+                    "enable": false,
+                    "speed": 1,
+                    "size_min": 0.1,
+                    "sync": false
+                }
+            },
+            "line_linked": {
+                "enable": true,
+                "distance": 150,
+                "color": "#fff",
+                "opacity": 0.2,
+                "width": 1
+            },
+            "move": {
+                "enable": true,
+                "speed": 4,
+                "direction": "none",
+                "random": false,
+                "straight": false,
+                "out_mode": "out",
+                "bounce": false,
+                "attract": {
+                    "enable": false,
+                    "rotateX": 600,
+                    "rotateY": 1200
+                }
+            }
+        },
+        "interactivity": {
+            "detect_on": "canvas",
+            "events": {
+                "onhover": {
+                    "enable": true,
+                    "mode": "grab"
+                },
+                "onclick": {
+                    "enable": true,
+                    "mode": "push"
+                },
+                "resize": true
+            },
+            "modes": {
+                "grab": {
+                    "distance": 140,
+                    "line_linked": {
+                        "opacity": 1
+                    }
+                },
+                "bubble": {
+                    "distance": 400,
+                    "size": 40,
+                    "duration": 2,
+                    "opacity": 8,
+                    "speed": 3
+                },
+                "repulse": {
+                    "distance": 200,
+                    "duration": 0.4
+                },
+                "push": {
+                    "particles_nb": 4
+                },
+                "remove": {
+                    "particles_nb": 2
+                }
+            }
+        },
+        "retina_detect": true
+    });
+</script>

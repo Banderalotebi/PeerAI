@@ -1,0 +1,87 @@
+<h3 id="headcolor">
+
+    <div id="myButton" class="pull-right">
+        <a uib-tooltip="Register New Flow"  uib-tooltip-placement="bottom"  uib-tooltip-trigger="focus"
+           class="btn btn-labeled btn-success" ui-sref="app.udd-create">
+            <span class="btn-label"><i class="fa fa-plus-square"></i></span>New
+        </a>
+    </div>
+
+    Data Flows
+    <ul class="breadcrumb">
+        <li><a ui-sref="app.data">Data</a>
+        </li>
+        <!-- <li ng-repeat="state in $state.$current.path" ng-switch="$last" ng-if="!state.abstract"
+            ng-class="{active: $last}"><a ng-switch-when="false" ui-sref="#{{state.url.format($stateParams)}}">{{state.title}}</a>
+            <span ng-switch-when="true" class="textcol">{{state.title}}</span>
+        </li> -->
+    </ul>
+</h3>
+<style>
+    .cblue {
+        background-color: #5F9EA0;
+    }
+</style>
+
+
+<section ng-controller="UDDController as controller" ng-init="find()" >
+    <toaster-container toaster-options="{'position-class': 'toast-bottom-right'}"></toaster-container>
+    <div ng-class="{'whirl ringed':controller.showLoading}">
+        <div class="panel panel-default" ng-if="uddFlows.length">
+            <div class="panel-heading">
+                <h3>Flow Activation</h3>
+            </div>
+            <div class="panel-body">
+            <fieldset>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="">Select flow</label>
+                        <select name="flowSelection" id="flowSelection" class="form-control" ng-model="selectedFlow">
+                            <option value="clear" selected>None</option>
+                            <option ng-if="uf.flowType=='interceptor'" value="{{uf.flowId}}" ng-repeat="uf in uddFlows">{{uf.flowName}}</option>
+                        </select>
+                        <button class="btn btn-success" ng-click="activateFlow(selectedFlow)">Activate</button>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="active flow">Active Flow: {{selectedFlow}}</label>
+                    </div>
+                </div>
+                <!-- <button class="btn btn-success">Activate</button> -->
+            </fieldset>
+            </div>
+        </div>
+        <div class="panel panel-default tobtab"  >
+            <div class="panel-body table-responsive">
+                <table datatable="ng" class="row-border hover" >
+                    <thead>
+                    <tr>
+                        <th>Data Flow</th>
+                        <th>Flow Id</th>
+                        <th>Flow Type</th>
+                        <th style="text-align: right">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="uddFlow in uddFlows">
+                        <td>{{uddFlow.flowName}}</td>
+                        <td>{{uddFlow.flowId}}</td>
+                        <td>{{uddFlow.flowType}}</td>
+                        <td style="text-align: right">
+                            <a ng-if="uddFlow.flowType=='direct'" uib-tooltip="Start the flow" ng-click="startFlow(uddFlow)"
+                            class="btn btn-sm btn-success"><i class="fa fa-play"></i>
+                            </a>&nbsp;&nbsp;&nbsp;
+                            <a uib-tooltip="Edit UDD FLow" ui-sref="app.udd-edit({uddId: uddFlow._id})"
+                            class="btn btn-sm btn-warning"><i class="fa fa-edit"></i>
+                            </a>&nbsp;&nbsp;&nbsp;
+                            <a uib-tooltip="Remove UDD Flow" tooltip-placement="left" ng-click="remove(uddFlow)"
+                            class="btn btn-sm btn-danger">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

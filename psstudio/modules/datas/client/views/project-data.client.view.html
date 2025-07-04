@@ -1,0 +1,845 @@
+<style>
+   .strike {
+      display: block;
+      text-align: center;
+      overflow: hidden;
+      white-space: nowrap;
+   }
+
+   .strike > span {
+      position: relative;
+      display: inline-block;
+   }
+
+   .strike > span:before,
+   .strike > span:after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 9999px;
+      height: 1px;
+      background: #A59492;
+   }
+
+   .strike > span:before {
+      right: 100%;
+      margin-right: 15px;
+   }
+
+   .strike > span:after {
+      left: 100%;
+      margin-left: 15px;
+   }
+
+   .inputfile {
+      width: 0.1px;
+      height: 0.1px;
+      opacity: 0;
+      overflow: hidden;
+      position: absolute;
+      z-index: -1;
+   }
+   .inputfile + label {
+      font-size: 1.25em;
+      font-weight: 700;
+      color: white;
+      background-color: black;
+      display: inline-block;
+   }
+
+   .inputfile:focus + label,
+   .inputfile + label:hover {
+      background-color: red;
+   }
+   #status-list li{
+      color: #fff;
+   }
+   .round-button {
+      width:50%;
+   }
+   /*.round-button-circle:hover {*/
+      /*background-color:#f58f30;*/
+      /*color: #FFFFFF;*/
+   /*}*/
+   .round-button a {
+      display:block;
+      float:left;
+      width:100%;
+      padding-top:57%;
+      padding-bottom:50%;
+      line-height:1em;
+      margin-top:-1.0em;
+
+      text-align:center;
+      color:#000 !important;
+      font-size:1.2em;
+      font-weight:bold;
+      text-decoration:none;
+   }
+   .round-button :hover {
+      color: #fff !important;
+   }
+   .show-adv-options{
+      font-size: 1.2em;
+   }
+   .show-adv-options:hover{
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1.2em;
+   }
+   .status{
+      padding: 3px;
+   }
+   .mt-custom-column{
+      padding-top: 15px;
+   }
+   .targetVariable{
+      color: #ffffff;
+      background-color: #d3cb71 !important;
+   }
+   /*.next a{*/
+      /*background-color: #3eabe1 !important;*/
+   /*}*/
+   /*.previous a{*/
+      /*background-color: #3eabe1 !important;*/
+   /*}*/
+   #headcolor{
+      border-bottom: 1px solid #31373a !important;
+   }
+   .page-head{
+      margin-bottom: 11px;
+   }
+   .upload-btn-wrapper {
+      position: relative;
+      overflow: hidden;
+      /*display: inline-block;*/
+   }
+   .upload-btn-wrapper input[type=file] {
+      font-size: 100px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+   }
+   .upload-btn-wrapper em:hover {
+      cursor: pointer;
+   }
+   .fix-to-top {
+      position: fixed !important;
+      right: 0% !important;
+   }
+   .pss-slider{
+      width:100%;
+   }
+   fieldset{
+      margin-bottom: 15px !important;
+      padding-bottom: 15px !important;
+   }
+   fieldset{
+      margin-bottom: 15px !important;
+   }
+   .pss-cstm-ptag{
+      margin: 0 0 0.5px;
+   }
+   .pss-chart-hover:hover{
+      color: #f48f30;
+   }
+   .search-field > input {
+      width: 170px !important;
+   }
+   .mpld3-figure{
+      display:block;
+      margin: auto;
+   }
+   .bg-info{
+      background-color: #151515 !important;
+      border: 3px dotted #d3cb71;
+      -webkit-transition: background-color 1s ease-in;
+      -moz-transition: background-color 1s ease-in;
+      -o-transition: background-color 1s ease-in;
+      transition: background-color 1s ease-in;
+   }
+   .pss-warning-box{
+      padding: 5px;
+      border: 1px solid #d3cb71;
+      border-radius: 3px;
+      text-align: center;
+   }
+   #uploadData_length{
+         display: none
+   }
+</style>
+<!--<h3 id="headcolor">-->
+   <!--<em class="fa fa-database"></em> Data-->
+   <!--<ul class="breadcrumb">-->
+      <!--<li ng-repeat="state in $state.$current.path" ng-switch="$last" ng-if="!state.abstract"-->
+          <!--ng-class="{active: $last}"><a ng-switch-when="false" href="#{{state.url.format($stateParams)}}">{{state.title}}</a>-->
+         <!--<span ng-switch-when="true" class="textcol">Data for training</span>-->
+      <!--</li>-->
+   <!--</ul>-->
+<!--</h3>-->
+<div class="page-head"> </div>
+<div nv-file-drop="" uploader="pdc.uploader" filters="queueLimit, customFilter" ng-cloak="" ng-init="pdc.fetchProjectDetails()">
+   <toaster-container toaster-options="{'position-class': 'toast-bottom-right'}">
+   </toaster-container>
+   <div class="container-fluid">
+      <div ng-class="{'whirl ringed':pdc.showLoading}">
+         <div ng-if="pdc.edaStarted" style="height:100vh;position: absolute;top:8%;left:0%;z-index: 3;" class="text-center fix-to-top  pss-eda-overlay">
+         </div>
+            <ul ng-if="pdc.edaStarted" class="col-md-4 col-md-offset-3 pss-list">
+               <li>
+                  <h3 class="text-center">EDA Stages</h3>
+                  <br/>
+               </li>
+               <li ng-repeat="x in pdc.edaStages track by $index">
+                  <div ng-if="x.status">
+                     <h4><em  style="color:green" class="fa fa-check"></em> &nbsp;{{x.stageTitle}}</h4>
+                  </div>
+                  <div ng-if="!x.status">
+                     <h3><em class="fa fa-cog fa-spin"></em> &nbsp;{{x.stageTitle}}</h3>
+                  </div>
+               </li>
+               <br/>
+               <li class="text-center" ng-if="pdc.project.projectStatus == 'Eda Completed'">
+                  <h5><em class="fa fa-clock-o text-value"></em> EDA duration: {{pdc.edaData.edaDuration|number:2}} sec</h5>
+                  <button class="btn btn-primary" ng-click="pdc.hideEdaProgress()">Continue</button>
+               </li>
+            </ul>
+      <div class="row">
+         <!-- <div ng-class="pdc.status.length ? 'col-md-9':'col-md-12'"> -->
+         <div ng-class="col-md-12">
+            <div class="panel panel-default">
+               <div class="panel-heading">
+                  <span>Train your model</span>
+                  <p class="pull-right">Project status: <span  class="text-muted text-value">{{pdc.project.projectStatus}}</span></p>
+               </div>
+               <div class="panel-body">
+                  <form action="/" form-wizard="" steps="4" validate-steps="true" name="wizardValidation">
+                     <div class="form-wizard wizard-horizontal">
+                        <!-- START wizard steps indicator-->
+                        <ol class="row">
+                           <li ng-class="{'active':wizard.active(1)}" ng-click="wizard.go(1)" class="col-md-4">
+                              <h4>Data</h4>
+                              <small class="text-muted">Upload your data file here.</small>
+                           </li>
+                           <li ng-if="!pdc.isNlp" ng-class="{'active':wizard.active(2)}" ng-click="wizard.go(pdc.gotoEda())" class="col-md-4">
+                              <h4>EDA</h4>
+                              <small class="text-muted">Do exploratory data analysis</small>
+                           </li>
+                           <li ng-class="{'active':wizard.active(3)}" ng-click="wizard.go(pdc.gotoModelTraining())" class="col-md-4">
+                              <h4>Train Model</h4>
+                              <small class="text-muted">Train your model</small>
+                           </li>
+                           <!--<li ng-class="{'active':wizard.active(4)}" ng-click="wizard.go(4)" class="col-md-3">-->
+                              <!--<h4>Done!</h4>-->
+                              <!--<small class="text-muted">Nullam sit amet magna vestibulum libero.</small>-->
+                           <!--</li>-->
+                        </ol>
+                        <hr>
+                        <!-- END wizard steps indicator-->
+                        <!-- START Wizard Step inputs-->
+                        <div id="step1" ng-show="wizard.active(1)">
+                           <!-- Wizard with validation require inner forms to group step inputs to be validated-->
+                           <fieldset ng-form="formStep1">
+                              <div class="col-md-12">
+                                 <a ng-if="pdc.fileEncodings.length" ng-click="pdc.openEncodingModal()" class="btn btn-primary btn-xs">Specify the file encoding</a>
+                              </div>
+                              <div ng-if="pdc.project.originalFileName" class="col-lg-12">
+                                 <div class="panel-heading text-center" ng-if="pdc.project.projectStatus !='Project Created'">Previously uploaded file info</div>
+                                 <div class="panel widget pss-navigation-bar">
+                                       <div class="row row-table">
+                                          <div class="col-md-4 col-sm-4 col-xs-6 text-center pv-xl br">
+                                             <div class="text-info">Status</div>
+                                                <div class="text-value text-uppercase">File uploaded</div>
+                                             </div>
+                                             <div class="col-md-4 col-sm-4 text-center col-xs-6 pv br">
+                                                <div class="text-info">File name</div>
+                                                <div class="text-value text-uppercase" style="overflow: hidden" uib-tooltip="{{pdc.project.originalFileName}}" tooltip-placement="bottom">{{pdc.project.originalFileName}}</div>
+                                             </div>
+                                             <div class="col-md-4 col-sm-4 col-xs-6 pv text-center">
+                                                <div class="text-info">File size</div>
+                                                <div class="text-value text-uppercase">{{pdc.project.fileSize|bytes}}</div>
+                                             </div>
+                                       </div>
+                                 </div>
+                              </div>
+                              <!-- START row-->
+                              <div class="col-md-12">
+                                 <div ng-show="pdc.uploader.isHTML5"  >
+                                    <div nv-file-over over-class="bg-info" nv-file-drop filters="fileTypeChecker" uploader="pdc.uploader" class="box-placeholder my-drop-zone text-center pss-custom-fileuploader">Drop your file here</div>
+                                 </div>
+                                 <!-- Example: nv-file-select="" uploader="{Object}" options="{Object}" filters="{String}"-->
+                                 <!--<div class="strike">-->
+                                    <!--<span>Or</span>-->
+                                 <!--</div>-->
+                                 <h3 class="text-center text-value">Or</h3>
+                                 <!--<input type="file" data-button-text="Multiple" data-class-button="btn btn-default" data-class-input="form-control inline" nv-file-select="" uploader="pdc.uploader" multiple="" class="form-control" />-->
+                                 <!--<br/>-->
+                                 <!--<div>-->
+                                    <!--<input ng-disabled="pdc.showLoading" id="dataset" filestyle="" accept=".csv" type="file" data-classbutton="btn btn-default" data-classinput="form-control inline" class="form-control" nv-file-select="" uploader="pdc.uploader"  />-->
+                                 <!--</div>-->
+                                 <div class="col-md-12 col-sm-12">
+                                    <!-- <div class="col-md-12 text-center">
+                                       <div class="upload-btn-wrapper">
+                                          <em class="fa fa-cloud-upload fa-3x btn btn-default"></em>
+                                          <input filters="fileTypeChecker" ng-disabled="pdc.showLoading" id="dataset" accept=".csv,.zip,.xlsx,.xls,.pkl,.pk,.pl,.pickle" type="file" data-classbutton="btn btn-default" data-classinput="form-control inline" class="form-control" nv-file-select="" uploader="pdc.uploader"/>
+                                       </div>
+                                    </div> -->
+                                    <!-- <div class="col-md-6">
+                                       <em uib-tooltip="Other data sources" tooltip-placement="bottom" class="fa fa-database fa-3x btn btn-default" data-classbutton="btn btn-default"></em>
+                                    </div> -->
+                                 </div>
+                                 <!--Uncomment this section for other data sources UI-->
+                                 <div class="col-md-12 col-sm-12">
+                                       <div class="col-md-6">
+                                          <div class="upload-btn-wrapper pull-right">
+                                             <em class="fa fa-cloud-upload fa-3x btn btn-default"></em>
+                                             <input filters="fileTypeChecker" style="height:50px" ng-disabled="pdc.showLoading" id="dataset" accept=".csv,.zip,.xlsx,.xls,.pkl,.pk,.pl,.pickle" type="file" data-classbutton="btn btn-default" data-classinput="form-control inline" class="form-control" nv-file-select="" uploader="pdc.uploader"/>
+                                          </div>
+                                       </div>
+                                       <div class="col-md-6">
+                                          <a ui-sref="app.udd-view"><em uib-tooltip="Other data sources" tooltip-placement="bottom" class="fa fa-database fa-3x btn btn-default" data-classbutton="btn btn-default"></em></a>
+                                       </div>
+                                    </div>
+                                 <h6 class="text-center">Max file size supported is 20MB.  <a class="fa fa-info-circle" href="#" data-toggle="tooltip" title="Support for larger files coming soon."></a></h6>
+
+                              </div>
+                              <div  class="col-md-12">
+                                 <!--<span ng-if="pdc.featureList.length" ng-repeat="head in pdc.featureList track by $index">{{head}}</span>-->
+                                 <hr>
+                                 <h3 class="text-center" ng-if="pdc.project.projectStatus != 'Project Created' && pdc.show ==false">Generating data preview...</h3>
+                                 <uib-tabset ng-if="pdc.show">
+                                    <uib-tab id="dataPanel" index="0" heading="Uploaded Data">
+                                       <h6 class="text-center">Note: Preview of first 5 records.</h6>
+                                       <table datatable="" id="uploadData"  dt-instance="pdc.dtInstanceUpldPreview" dt-options="pdc.dtOptionsUpldPreview" dt-columns="pdc.dtColumnsUpldPreview" class="row-border hover"></table>
+                                    </uib-tab>
+                                 </uib-tabset>
+                              </div>
+                              <!-- END row-->
+                           </fieldset>
+                           <ul class="pager">
+                              <li class="next"><a href="" ng-click="wizard.go(pdc.gotoEda())">Next<span>&rarr;</span></a>
+                              </li>
+                           </ul>
+                        </div>
+                        <!-- END Wizard Step inputs-->
+                        <!-- START Wizard Step inputs-->
+                        <div id="step2" ng-show="wizard.active(2)">
+                           <!-- Wizard with validation require inner forms to group step inputs to be validated-->
+                           <fieldset ng-form="formStep2">
+                              <!--<legend>Exploratory data analysis</legend>-->
+                              <!-- START row-->
+                              <div class="col-md-12">
+                                 <fieldset>
+                                    <label class="control-label">EDA Mode</label>
+                                    <div>
+                                       <label class="radio-inline"><input type="radio" ng-model="pdc.edaMode" ng-change="pdc.chooseEdaMode(pdc.edaMode)" value="auto"/>Auto</label>
+                                       <label class="radio-inline"><input type="radio" ng-model="pdc.edaMode" ng-change="pdc.chooseEdaMode(pdc.edaMode)" value="manual"/>Manual</label>
+                                       <div class="pull-right">
+                                          <button ng-if="pdc.showEdaSummary" type="button" ng-click="pdc.openAdvEda()" class="btn btn-primary">EDA Report</button>
+                                       </div>
+                                    </div>
+                                    
+                                 </fieldset>
+                                 <fieldset ng-if="pdc.manualEdaMode">
+                                    <table datatable="" id="edaStrategy" dt-options="pdc.dtOptionsEdaStrategy" dt-columns="pdc.dtColumnsEdaStrategy" dt-instance="pdc.dtInstanceEdaStrategy" class="row-border hover"></table>
+                                 </fieldset>
+                                 <fieldset>
+                                    <button ng-disabled="pdc.disableStartEda" type="button" ng-click="pdc.active = 1;pdc.startEda()" class="btn btn-primary">
+                                       Start EDA
+                                    </button>
+                                    <!--<p ng-if="pdc.showTrainingSetion">Eda started...</p>-->
+                                 </fieldset>
+                                 <fieldset ng-if="pdc.edaData.blankColumn.length">
+                                    <div class="col-md-6 col-md-offset-3 pss-warning-box">
+                                       <p style="margin: 0px;">
+                                          Found some empty columns
+                                    <span ng-repeat="blankColumn in pdc.edaData.blankColumn">
+                                      ({{blankColumn}}),
+                                    </span>
+                                          will be removed automatically!
+                                       </p>
+                                    </div>
+                                    <br/>
+                                 </fieldset>
+                              </div>
+
+                              <uib-tabset ng-if="pdc.showEdaSummary" >
+                                 <hr>
+                                 <h4 ng-if="!pdc.edaStarted" class="text-center">Previously performed EDA result.</h4>
+                                 <!--<p ng-if="pdc.project.projectStatus='File Uploaded'" class="text-center">Previously performed eda result</p>-->
+                                 <uib-tab  id="dataPanelEda" index="1" heading="{{wizard.active(2) ? 'EDA Summary':'Features'}}" >
+                                    <div class="pull-right">
+                                       <a class="text-value" ng-click="pdc.downloadEdaSummary()"><em class="fa fa-download"></em> Imputed dataset</a>
+                                    </div>
+                                    <table  id="tableEdaSummary" datatable="" dt-options="pdc.dtOptionsEdaSummary" dt-columns="pdc.dtColumnsEdaSummary" dt-instance="pdc.dtInstanceEdaSummary" class="row-border hover"></table>
+                                 </uib-tab>
+                                 <uib-tab ng-if="pdc.edaPreviewData.length" id="dataPanelPreview" index="2" heading="Preview" ng-hide="pdc.hideEdaSummaryTab">
+                                    <table datatable="" id="edaPreview"  dt-instance="pdc.dtInstanceEdaPreview" dt-options="pdc.dtOptionsEdaPreview" dt-columns="pdc.dtColumnsEdaPreview" class="row-border hover"></table>
+                                 </uib-tab>
+                              </uib-tabset>
+                              <!-- END row-->
+                           </fieldset>
+                           <ul class="pager">
+                              <li class="previous">
+                                 <a href="" ng-click="wizard.go(1)">
+                                    <span>&larr; Previous</span>
+                                 </a>
+                              </li>
+                              <li class="next"><a href="" ng-click="wizard.go(pdc.gotoModelTraining())">Next<span>&rarr;</span></a>
+                              </li>
+                           </ul>
+                        </div>
+                        <!-- END Wizard Step inputs-->
+                        <!-- START Wizard Step inputs-->
+                        <div id="step3" ng-show="wizard.active(3)">
+                           <!-- Wizard with validation require inner forms to group step inputs to be validated-->
+                           <fieldset ng-form="formStep3">
+                              <!--<legend>Model training</legend>-->
+                              <div class="row">
+                                    <div class="col-md-12 form-group">
+                                       <button type="button" class="btn btn-primary" ng-click="pdc.doMultiUniVariateAnalysis()">MultiVariate/Univariate Analysis</button>
+                                    </div>
+                                 </div>
+                              <!-- START row-->
+                              <div class="row">
+                                 <div class="col-md-6 mt-custom-column">
+                                    <label class="control-label">Select target</label>
+                                    <select id="targetVar" ng-if="wizard.active(3)" chosen="" ng-model="pdc.target"  ng-change="pdc.onTargetChange($event,pdc.target)" class="chosen-select input-md">
+                                       <option value=""></option>
+
+                                       <!--<option ng-value ="target.featureName" ng-repeat="target in pdc.featureList track by $index">{{target.featureName}}</option>-->
+                                       <option ng-value ="target.featureName" ng-repeat="target in pdc.targetList track by $index">{{target.featureName}}</option>
+                                    </select>
+                                    <div class="animated fadeInUpShort" id="targetPlot" ng-bind-html="targetPlot"></div>
+                                 </div>
+                                 <div class="col-md-6 mt-custom-column" ng-if="pdc.modelAlgorithms.length">
+                                    <label class="control-label">Select Model Algorithm</label>
+                                    <select id="modelAlgorithms" data-placeholder="Select algorithms" multiple chosen="" ng-model="pdc.modelAlgorithm" pss-custom-trigger = "formFeilds" class="chosen-select input-md">
+                                       <option value=""></option>
+                                       <option value="{{modelAlgorithm.name}}" ng-repeat="modelAlgorithm in pdc.modelAlgorithms">{{modelAlgorithm.name}}</option>
+                                    </select>
+                                 </div>
+
+                              </div>
+                              
+                              <div class="row">
+                                 <div style="padding:10px" class="col-md-12 text-center" ng-if="pdc.modelAlgorithms.length">
+                                    <a class="show-adv-options" ng-click="pdc.toggleAdvacedOptions()"><em class="fa fa-cog"></em> {{pdc.showAdvancedOptions ? 'Hide':'Show'}} advanced options</a>
+                                 </div>
+                                 <div ng-if="pdc.showAdvancedOptions" class="col-md-12">
+                                    <hr>
+                                    <div class="col-md-6 br">
+                                       <fieldset>
+                                          <div>
+                                             <h4>Validation strategy</h4>
+                                             <small class="text-muted">Selected validation strategy: {{pdc.validationStrategy.validationStrategyName}}</small>
+                                          </div>
+                                          <div class="btn-group">
+                                             <label ng-model="pdc.validationStrategy.validationStrategyName" ng-click="pdc.setCVStrategies()" uib-btn-radio="'cv'" class="btn btn-primary">Cross Validation</label>
+                                             <!-- <label ng-model="pdc.validationStrategy.validationStrategyName" ng-click="pdc.setTVHStrategies()" uib-btn-radio="'tvh'" class="btn btn-primary">Train Validation Holdout</label> -->
+                                          </div>
+                                          <div ng-if="pdc.correlationIsMultilabel">
+                                                <div>
+                                                      <div>
+                                                         <h5 class="control-label" style="margin-bottom:0px">Select the number of n_split: {{pdc.validationStrategy.strategyValues.nSplit}}</h5>
+                                                         <slider ng-model="pdc.validationStrategy.strategyValues.nSplit" min="2" max="10" step="1" orientation="horizontal" class="bs-slider slider-horizontal pss-slider"></slider>
+                                                      </div>
+                                                      <div class="row">
+                                                         <div class="col-lg-12">
+                                                            <div class="panel widget pss-kfold">
+                                                               <div class="flex-container">
+                                                                  <div ng-repeat="kf in pdc.getArray(pdc.validationStrategy.strategyValues.nSplit) track by $index" ng-class=" $last ? 'pss-kfold-highlight':''">{{$index+1}}</div>
+                                                               </div>
+                                                            </div>
+                                                         </div>
+                                                      </div>
+                                                   </div>
+                                          </div>
+                                          <div ng-if="pdc.validationStrategy.validationStrategyName == 'cv' && !pdc.correlationIsMultilabel">
+                                             <div class="btn-group" ng-if="pdc.correlationAlgoType == 'classification'"><br>
+                                                <label ng-model="pdc.validationStrategy.strategyValues.technique" uib-btn-radio="'kFold'" class="btn btn-primary btn-sm">kFold</label>
+                                                <label ng-model="pdc.validationStrategy.strategyValues.technique" uib-btn-radio="'stratifiedKFold'" class="btn btn-primary btn-sm">stratifiedKFold</label>
+                                                <label ng-model="pdc.validationStrategy.strategyValues.technique" uib-btn-radio="'stratifiedShuffleSplit'" ng-click="pdc.setTestSize" class="btn btn-primary btn-sm">stratifiedShuffleSplit</label>
+                                                <!-- <label ng-model="pdc.validationStrategy.strategyValues.technique" uib-btn-radio="'groupKFold'" class="btn btn-primary btn-sm">groupKFold</label> -->
+                                                <label ng-model="pdc.validationStrategy.strategyValues.technique" uib-btn-radio="'timeSeriesSplit'" class="btn btn-primary btn-sm">timeSeriesSplit</label>
+                                             </div>
+                                             <div class="btn-group" ng-if="pdc.correlationAlgoType == 'regression'"><br>
+                                                <label ng-model="pdc.validationStrategy.strategyValues.technique" uib-btn-radio="'kFold'" class="btn btn-primary btn-sm">kFold</label>
+                                                <!-- <label ng-model="pdc.validationStrategy.strategyValues.technique" uib-btn-radio="'groupKFold'" ng-click="pdc.setTestSize" class="btn btn-primary btn-sm">groupKFold</label> -->
+                                                <label ng-model="pdc.validationStrategy.strategyValues.technique" uib-btn-radio="'timeSeriesSplit'" class="btn btn-primary btn-sm">timeSeriesSplit</label>
+                                             </div>
+                                             <div>
+                                                <div>
+                                                   <h5 class="control-label" style="margin-bottom:0px">Select the number of n_split: {{pdc.validationStrategy.strategyValues.nSplit}}</h5>
+                                                   <slider ng-model="pdc.validationStrategy.strategyValues.nSplit" min="2" max="10" step="1" orientation="horizontal" class="bs-slider slider-horizontal pss-slider"></slider>
+                                                </div>
+                                                <div class="row">
+                                                   <div class="col-lg-12">
+                                                      <div class="panel widget pss-kfold">
+                                                         <div class="flex-container">
+                                                            <div ng-repeat="kf in pdc.getArray(pdc.validationStrategy.strategyValues.nSplit) track by $index" ng-class=" $last ? 'pss-kfold-highlight':''">{{$index+1}}</div>
+                                                         </div>
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                             <div ng-if="pdc.validationStrategy.strategyValues.technique =='stratifiedShuffleSplit'">
+                                                <fieldset>
+                                                   <label class="control-label">Select test set size(%): {{pdc.validationStrategy.strategyValues.testSize}}</label>
+                                                   <div class="">
+                                                      <slider ng-model="pdc.validationStrategy.strategyValues.testSize" min="5" max="50" step="5" orientation="horizontal" class="bs-slider slider-horizontal pss-slider"></slider>
+                                                   </div>
+                                                </fieldset>
+                                             </div>
+                                          </div>
+                                          
+                                       </fieldset>
+                                       <fieldset>
+                                          <div class="">
+                                             <button type="button" class="btn btn-primary" ng-click="pdc.openHPTModal()"> Hyper Parameter Tuning</button>
+                                          </div>
+                                       </fieldset>
+                                    </div>
+                                    <div class="col-md-6 ">
+                                       <!--<fieldset>-->
+                                       <!--<label class="control-label">Select Partitioning Method:</label>-->
+                                       <!--<div class="btn-group">-->
+                                       <!--<label ng-model="pdc.radioModel" uib-btn-radio="'random'" class="btn btn-primary">Random</label>-->
+                                       <!--<label ng-model="pdc.radioModel" uib-btn-radio="'pcolumn'" class="btn btn-primary">Partition Column</label>-->
+                                       <!--<label ng-model="pdc.radioModel" uib-btn-radio="'group'" class="btn btn-primary">Group</label>-->
+                                       <!--<label ng-model="pdc.radioModel" uib-btn-radio="'satisfied'" class="btn btn-primary">Satisfied</label>-->
+                                       <!--</div>-->
+                                       <!--</fieldset>-->
+                                       <fieldset>
+                                          <label class="control-label">Select test set size(%): {{pdc.testSize}}</label>
+                                          <div class="">
+                                             <slider ng-model="pdc.testSize" min="5" max="50" step="5" orientation="horizontal" class="bs-slider slider-horizontal pss-slider"></slider>
+                                          </div>
+                                       </fieldset>
+                                       <fieldset>
+                                          <label class="control-label">Feature scaling options</label>
+                                          <div class="">
+                                             <label class="radio-inline"><input type="radio" ng-model="pdc.featureScalingOption"  value="none"/>None</label>
+                                             <label class="radio-inline"><input type="radio" ng-model="pdc.featureScalingOption"  value="standard_scalar"/>Standard Scalar</label>
+                                             <label class="radio-inline"><input type="radio" ng-model="pdc.featureScalingOption"  value="robust_scalar"/>Robust Scalar</label>
+                                          </div>
+                                       </fieldset>
+                                    </div>
+                                    <hr>
+                                    <div class="col-md-12" ng-if="pdc.problemType == 'NLP'">
+                                       <div style="padding-left: 0px" class="col-md-6 br">
+                                          <fieldset>
+                                             <label class="control-label">Language</label>
+                                             <select data-placeholder="Select language" ng-model="pdc.nlpLanguage" class="form-control" ng-options="nlpLanguage for nlpLanguage in pdc.nlpLanguages">
+                                                <option value="" disabled>Select NLP Language</option>
+                                             </select>
+                                          </fieldset>
+                                       </div>
+                                       <div class="col-md-6">
+                                          <label class="control-label">NLP-Feature count</label>
+                                          <fieldset>
+                                             <!-- <select class="form-control" ng-model="pdc.nFeatureCount" ng-options="nFeatureCount for nFeatureCount in pdc.nFeatureCounts">
+                                                <option value="" disabled>Select NLP Feature count</option>
+                                             </select> -->
+                                             <input type="number"class="form-control" ng-model="pdc.nFeatureCount">
+                                          </fieldset>
+                                       </div>
+                                    </div>
+                                    <hr>
+                                    <!-- <div class="col-md-12">
+                                       <div class="">
+                                          <button type="button" class="btn btn-primary" ng-click="pdc.openHPTModal()"> Hyper Parameter Tuning</button>
+                                       </div>
+                                    </div> -->
+                                 </div>
+                              </div>
+                              <uib-tabset ng-if="pdc.showTrainingTable">
+                                 <hr>
+                                 <uib-tab id="dataPanelFeature" index="1" heading="{{wizard.active(2) ? 'EDA Summary':'Features'}}" >
+                                    <table id="tableFeatures" datatable="" dt-options="pdc.dtOptionsTraining" dt-columns="pdc.dtColumnsTraining" dt-instance="pdc.dtInstanceTraining" class="row-border hover"></table>
+                                 </uib-tab>
+                              </uib-tabset>
+                              <!-- END row-->
+                           </fieldset>
+                           <ul class="pager">
+                              <li class="previous">
+                                 <a href="" ng-click="pdc.isNlp ? wizard.go(1) : wizard.go(2)">
+                                    <span>&larr; Previous</span>
+                                 </a>
+                              </li>
+                              <!--<li class="next"><a href="" ng-click="wizard.go(4)">Next<span>&rarr;</span></a>-->
+                              <!--</li>-->
+                           </ul>
+                           <div class="col-md-4 col-md-offset-4 text-center">
+                              <div class="round-button text-center col-md-offset-4">
+                                 <div class="round-button-circle text-center">
+                                    <a  class="round-button" ng-click="pdc.doTraining()">{{pdc.trainingStarted ? 'Training started...':'Start Training'}}</a>
+                                 </div>
+                              </div>
+                              <div ng-if="pdc.project.projectStatus == 'Model Failed'" class="text-center">
+                                 <span style="margin-left: 10px;color: red">Training failed, please try again.</span>
+                              </div>
+                           </div>
+                        </div>
+                        <!-- END Wizard Step inputs-->
+                        <!-- START Wizard Step inputs-->
+                        <!--<div id="step4" ng-show="wizard.active(4)">-->
+                           <!--<div class="jumbotron">-->
+                              <!--<h1>Done!</h1>-->
+                              <!--<p>In vulputate mattis ipsum vitae vehicula. Praesent at arcu non arcu convallis pellentesque. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>-->
+                              <!--<p>-->
+                                 <!--<button type="button" ng-click="submitWizard()" class="btn btn-info btn-lg">You can Submit Now</button>-->
+                              <!--</p>-->
+                           <!--</div>-->
+                           <!--<ul class="pager">-->
+                              <!--<li class="previous">-->
+                                 <!--<a href="" ng-click="wizard.go(3)">-->
+                                    <!--<span>&larr; Previous</span>-->
+                                 <!--</a>-->
+                              <!--</li>-->
+                           <!--</ul>-->
+                        <!--</div>-->
+                        <!-- END Wizard Step inputs-->
+                     </div>
+                  </form>
+               </div>
+            </div>
+         </div>
+         <div class="fix-to-top hidden-sm hidden-xs col-md-3 fadeInRight">
+            <!--<div class="">-->
+               <!--<div class="panel-body">-->
+                  <!--<h4 class="page-header mt0">Activities</h4>-->
+                  <!--<div id="status-list">-->
+                     <!--<ol>-->
+                        <!--<li class="status" ng-repeat="stat in pdc.status track by $index">-->
+                           <!--<em class="fa fa-check-circle"></em> <label>{{stat}}</label>-->
+                        <!--</li>-->
+                        <!--<h5 class="text-center text-muted" ng-if="!pdc.status.length">No activities yet</h5>-->
+                     <!--</ol>-->
+                  <!--</div>-->
+               <!--</div>-->
+            <!--</div>-->
+            <!-- <ul style="height: 550px; overflow-y: auto" ng-if="pdc.status.length" ng-class="timelineAlt ? 'timeline-alt' : 'timeline'" ng-init="timelineAlt=true"> -->
+               <!-- <li class="timeline-separator">Activities</li> -->
+               <!-- START timeline item-->
+               <!-- <li ng-repeat="stat in pdc.status track by $index">
+                  {{read_file}}
+                  <div class="timeline-badge pss-primary">
+                     <em class="fa fa-check-circle"></em>
+                  </div>
+                  <div class="timeline-panel">
+                     <div ng-class="timelineAlt ? 'right' : 'left'" class="popover">
+                        <h5 class="popover-title">{{stat.title}}</h5>
+                        <div class="arrow"></div>
+                        <div class="popover-content">
+                           <p class="text-muted text-small pss-cstm-ptag" ng-if="stat.key == 'uploaded'">{{stat['value'].size|bytes}}</p>
+                           <div ng-show="pdc.uploader.isHTML5">
+                              <div ng-if="stat.key == 'upload'" style="margin-bottom: 0;" class="progress progress-xs text-center">
+                                 <div role="progressbar" ng-style="{ 'width':  pdc.uploader.progress + '%' }" class="progress-bar"></div>
+                              </div>
+                           </div>
+                           <p class="text-muted text-small pss-cstm-ptag"ng-if="stat.key == 'read_file'">{{stat['value'].name}}</p>
+                           <small class="text-muted text-small">{{stat.timestamp| date:'dd/MM/yyyy hh:mm:ss a'}}</small>
+                        </div>
+                     </div>
+                  </div>
+               </li> -->
+               <!-- END timeline item-->
+            <!-- </ul> -->
+         </div>
+      </div>
+      </div>
+   </div>
+</div>
+<!-- Model content for eda graph-->
+<script type="text/ng-template" id="myModalContent.html">
+   <style>
+   </style>
+   <div class="modal-header">
+      <div class="col-md-2" ng-if="pdc.dataType.toLowerCase()!='text'">
+         <label>Select bin size</label>
+         <select class="form-control" ng-model="pdc.selectedBin" ng-change="pdc.onBinSizeChange()" ng-options="binSize for binSize in pdc.binSizes">
+         </select>
+      </div>
+   </div>
+   <div class="modal-body">
+      <div class="error"></div>
+      <div class="row">
+         <!--<nvd3 options='pdc.options' data='pdc.data'></nvd3>-->
+         <!--<histogram data="data1"></histogram>-->
+         <div id="edagraph" ng-bind-html="content"></div>
+      </div>
+   </div>
+   <div class="modal-footer">
+      <button class="btn btn-warning" ng-click="cancel()">Close</button>
+   </div>
+</script>
+
+<!--Model content for plotting correlation graph-->
+<script type="text/ng-template" id="correlationGraphModel.html">
+   <style>
+   </style>
+   <div class="modal-body">
+      <div class="error"></div>
+      <div class="row">
+         <div ng-if="pType=='NLP'">
+            <h4 class="text-center">Value Count</h4>
+            <div ui-grid="pdc.gridOptions" class="grid"></div>
+         </div>
+         <div ng-if="pType=='ML'">
+            <h4 class="text-center">Scatter Plot</h4>
+            <div ng-if="pType=='ML'" id="scatterGraph" ng-bind-html="contentScatter"></div>
+         </div>
+      </div>
+   </div>
+      <div class="modal-footer">
+         <button class="btn btn-warning" ng-click="cancel()">Close</button>
+      </div>
+</script>
+
+<!--Model content for hyper parameter tuning-->
+<script type="text/ng-template" id="HPTModel.html">
+   <style>
+   </style>
+   <div class="modal-header">
+      <h3>Hyper parameter tuning</h3>
+   </div>
+   <div class="modal-body">
+      <div class="error"></div>
+      <fieldset>
+         <!--<label>Select algorithms</label>-->
+         <div class="">
+            <select class="form-control" ng-model="pdc.selectedHPTAlgorithm" ng-options="algorithm for algorithm in pdc.modelAlgorithm" ng-change="pdc.onHyperParamAlgoChange(pdc.selectedHPTAlgorithm)">
+               <option value="" disabled>Select an algorithm</option>
+            </select>
+         </div>
+      </fieldset>
+      <div class="form-group" ng-repeat="form in formFeilds.fields">
+         <label>{{form.label}}</label>
+
+         <!--For input type=text-->
+         <div ng-if="form.type=='text'">
+            <input class="form-control" type="{{form.type}}" name="{{form.name}}" ng-model="form.data">
+         </div>
+
+         <!--For input type=number-->
+         <div ng-if="form.type=='number'">
+            <input class="form-control" type="{{form.type}}" name="{{form.name}}" ng-model="form.data">
+         </div>
+
+         <!--For input type=radio-->
+         <div class="col-md-12" ng-if="form.type=='radio'">
+            <div class="col-md-6" ng-repeat="rb in form.radio_btns">
+               <input type="radio" ng-model="form.data"  ng-value="rb.value"> {{rb.radio_label}}
+            </div>
+         </div>
+
+         <!--For input type=select-->
+         <div ng-if="form.type=='select'">
+            <select class="form-control" ng-model="form.data" ng-options="option.value as option.option_label for option in form.select_options">
+               <option ng-if="option.placeholder_text" value="" disabled>{{option.placeholder_text}}</option>
+            </select>
+            <div ng-if="form.sub_ui_elemets.length">
+               <div ng-if="sub_ui_el.display_for.indexOf(form.data) > -1 ? true:false " ng-repeat="sub_ui_el in form.sub_ui_elemets">
+                  <label>{{sub_ui_el.label}}</label>
+                  <input class="form-control" type="{{sub_ui_el.type}}" ng-model="sub_ui_el.data">
+               </div>
+            </div>
+         </div>
+      </div>
+      <!--<pre>{{pdc.formFeilds|json}}</pre>-->
+   </div>
+   <div class="modal-footer">
+      <span style="color: green" ng-if="pdc.showhptStatus">
+         Saved {{formFeilds.algoName}} preferences
+      </span>
+
+      <button class="btn btn-primary" type="button" ng-click="pdc.resetHPTfields(formFeilds.algoName)">Reset Defaults</button>
+      <button class="btn btn-primary" type="button" ng-click="saveHPTPreference(formFeilds)">Save</button>
+      <button class="btn btn-warning" ng-click="cancel()">Close</button>
+   </div>
+</script>
+<!--Model content for hyper parameter tuning-->
+<script type="text/ng-template" id="encodingModel.html">
+   <div class="modal-header">
+      <h3>Specify the file encoding</h3>
+   </div>
+   <div class="modal-body">
+      <div class="error"></div>
+      <fieldset>
+         <div class="">
+            <select class="form-control" ng-model="pdc.selectedFileEncoding" ng-options="encoding for encoding in pdc.fileEncodings track by encoding">
+            </select>
+            <p>Note : Default encoding will be utf_8</p>
+         </div>
+      </fieldset>
+   </div>
+   <div class="modal-footer">
+      <button class="btn btn-primary" type="button" ng-click="saveFileEncoding(pdc.selectedFileEncoding)">Save</button>
+      <button class="btn btn-warning" ng-click="cancel()">Close</button>
+   </div>
+</script>
+
+<!--Model content for advanced eda-->
+<script type="text/ng-template" id="advEdaModel.html">
+      <style>
+           @media (min-width: 768px) {
+            .modal-xl {
+                  width: 90%;
+                  max-width:1200px;
+                  }
+            }
+      </style>
+      <div class="modal-body">
+         <div class="error"></div>
+         <h4 class="text-center">Advanced EDA</h4>
+         <div id="idContentAdvEda" ng-bind-html="contentAdvEda"></div>
+      </div>
+         <div class="modal-footer">
+            <button class="btn btn-warning" ng-click="cancel()">Close</button>
+         </div>
+   </script>
+
+<!--Model content for multi/univariate-->
+<script type="text/ng-template" id="multiUnivariateAnalysis.html">
+   <style>
+        @media (min-width: 768px) {
+         .modal-xl {
+               width: 90%;
+               max-width:1200px;
+               }
+         }
+   </style>
+   <div class="modal-body">
+      <div class="error"></div>
+      <h4 class="text-center">Multivariate/Univariate Analysis</h4>
+      <div class="col-md-12">
+         <div class="col-md-6 mt-custom-column">
+            <div class="form-group">
+               <label class="control-label">Select Features</label>
+               <!-- <select id="multiUniFeatured" data-placeholder="Select features" multiple chosen max-selected-options="3" ng-model="pdc.multiUniFeatures" pss-custom-trigger = "formFeilds" class="chosen-select input-md">
+                  <option value=""></option>
+                  <option value="{{feature}}" ng-repeat="feature in pdc.allFeatures">{{feature}}</option>
+               </select> -->
+               <ui-select multiple="" ng-model="pdc.multiUniFeatures" limit="3" theme="bootstrap" ng-disabled="uisel.disabled">
+                  <ui-select-match placeholder="Select features">{{$item}}</ui-select-match>
+                  <ui-select-choices repeat="feature in pdc.allFeatures | filter:$select.search">{{feature}}</ui-select-choices>
+               </ui-select>
+            </div>
+            <div class="form-group">
+               <button class="btn btn-success" ng-click="submit()">Submit</button>
+            </div>
+         </div>
+      </div>
+      <div class="col-md-12">
+         <div id="multiUnivariateAnalysis" ng-bind-html="multiUnivariateAnalysis" style="overflow:auto;"></div>
+         <div id="multivariateImageContainer">
+            <img width="100%" id="multivariateImage"/>
+         </div>
+      </div>
+   </div>
+   <div class="modal-footer">
+      <button class="btn btn-warning" ng-click="cancel()">Close</button>
+   </div>
+</script>

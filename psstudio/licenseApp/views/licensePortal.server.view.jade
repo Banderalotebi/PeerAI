@@ -1,0 +1,74 @@
+//
+   Created by vishnu on 06/02/19.
+
+extends licenseLayout.server.view
+
+
+block content
+    flex-container
+    h1(class='header')="Winjit PredictSense - Licensing Portal"
+    |   <script>
+    |   function openFile(evt) {
+    |   var file = evt.target.files[0]
+    |   reader = new FileReader();
+    |   reader.onload = function () {
+    |   var data = this.result; // do some thing with data
+    |   console.log(data);
+    |   document.getElementById("myinput").value=data;
+    | };
+    | reader.readAsText(file);
+    | }
+    | </script>
+
+    div(class='bloq indent style-1 clearfix')
+        form(method="post", id='LicensePortal', action="../activateOnline", target='hidden-frame')
+            div(class='after-left')
+                div
+                    label Serial Key
+                div
+                    input(type='text', maxlength='50', size="25", required='', name='serial', placeholder='Serial Key')
+                br
+                div
+                    label Company
+                div
+                    input(type='text', maxlength='50', size="25", required='', name='companyName', placeholder='ABC Pvt. Ltd.')
+                br
+                div
+                    label Email
+                div
+                    input(type='email', maxlength='50', size="25", name='email', required='', placeholder='user@company.com')
+
+                br
+
+                input(type="radio", name="activation", value="online", checked= true)
+                | Online
+                |  &nbsp;
+                span  &nbsp;
+                |  &nbsp;
+                span  &nbsp;
+                |  &nbsp;
+                span  &nbsp;
+                input(type="radio", name="activation", value="offline", checked= false)
+                | Offline
+
+
+
+
+            div(class='after-left')
+                br
+                input(type='submit', value='Register', class='btn btn-primary')
+
+
+                br
+                br
+                br
+                br
+
+                flex-container
+                    h4(class='header')="Offline License Activation"
+                    div(class='bloq indent style-1 clearfix')
+
+        form(id='offlineForm' ,action='../activateOffline', method='post', target='_blank')
+            input(type='file',onchange='openFile(event)', id='fileInput', class='btn btn-primary')
+            input(type="hidden", name="lic", id="myinput")
+            input(type='submit', value='Activate', class='btn btn-primary')

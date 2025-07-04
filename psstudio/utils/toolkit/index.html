@@ -1,0 +1,194 @@
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Angular Material style sheet -->
+    <link rel="stylesheet" href="/static/angular-material.min.css">
+    <style type="text/css">
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td,
+        th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        md-toolbar:not(.md-menu-toolbar) {
+            /* background-color: #fff !important; */
+            background-color: #005298 !important;
+        }
+
+        .md-button.md-primary.md-raised {
+            background-color: #005298 !important;
+        }
+    </style>
+</head>
+
+<body ng-app="ToolkitApp" ng-controller="AppCtrl" ng-cloak>
+    <div>
+        <md-toolbar class="">
+            <div class="md-toolbar-tools">
+                <md-button class="md-icon-button" aria-label="Settings" ng-disabled="true">
+                </md-button>
+                <img src= {{ url_for('static', filename = 'logo.png') }} >
+            </div>
+        </md-toolbar>
+    </div>
+    <div layout="row" style="height: 100%;margin: 0">
+        <div flex="20" flex-xs="0">
+        </div>
+        <div flex="60" flex-xs="100">
+            <div layout="column" ng-cloak class="md-inline-form">
+                <md-content layout-gt-sm="row" layout-padding>
+                    <md-card flex md-theme-watch>
+                        <md-card-title>
+                            <md-card-title-text>
+                                <span class="md-headline">Toolkit App</span>
+                            </md-card-title-text>
+                        </md-card-title>
+                        <md-card-content>
+                            <md-content layout-gt-sm="row" layout-align="center center" layout-padding>
+                                <div layout-padding layout-align="center center">
+                                    {% raw %}
+                                    <md-input-container flex="100" ng-repeat="dt in data">
+                                        <label>{{dt.featureName}}</label>
+                                        <input ng-model="formData[dt.featureName]" type="{{dt.dataType == 'Numeric'? 'number':'text'}}">
+                                    </md-input-container>
+                                    {% endraw %}
+                                </div>
+
+                            </md-content>
+                            <div ng-if="showProgress" layout="row" layout-sm="column" layout-align="space-around">
+                                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                            </div>
+                            {% raw %}
+                            <md-content>
+                                <div layout="row" layout-align="center center">
+                                    <h3>Result</h3>
+                                </div>
+                                <!--prediction result-->
+                                <table>
+                                    <thead style="background-color: #eaeaea">      
+                                        <tr>
+                                            <th ng-repeat="(key,val) in result" scope="col">{{key}}</th>
+                                        </tr>
+                                        
+                                    </thead>
+                                    <tbody>
+                                        
+                                        <tr>
+                                            <td  ng-repeat="(key,val) in result">{{result[key]}}</td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </md-content>
+                        </md-card-content>
+                        {% endraw %}
+                        <md-card-actions layout="column">
+                        <md-card-actions layout="row" layout-align="center center">
+                            <md-button ng-click="clear()" class="md-raised md-primary">Clear</md-button>
+                        <md-button ng-click="submit()" class="md-raised md-primary">Submit</md-button>
+                        </md-card-actions>
+                    
+                    </md-card>
+
+                </md-content>
+
+            </div>
+        </div>
+
+        <div flex="20" flex-xs="0">
+        </div>
+    </div>
+
+    <!-- Angular Material requires Angular.js Libraries -->
+    <script src="/static/angular.min.js"></script>
+    <script src="/static/angular-animate.min.js"></script>
+    <script src="/static/angular-aria.min.js"></script>
+    <script src="/static/angular-messages.min.js"></script>
+    <!-- Angular Material Library -->
+    <script src="/static/angular-material.min.js"></script>
+
+    <!-- Your application bootstrap  -->
+    <script type="text/javascript">    
+        
+        var app = angular.module('ToolkitApp', ['ngMaterial', 'ngMessages']);
+
+        app.controller('AppCtrl', function ($scope, $http) {
+            //Specify the API here
+            var api = "/api/prediction";
+            //Init
+            $scope.data = null
+            $scope.formData = {};
+            $scope.result = [];
+            $scope.showProgress = false;
+            //generate form data
+            generateFormData()
+
+            //Function sbmit data to server
+            $scope.submit = function () {
+                $scope.showProgress = true;
+                $scope.result = {};
+                $scope.data.forEach(function(data){
+                    $scope.formData[data.featureName] = $scope.formData.hasOwnProperty(data.featureName) ? $scope.formData[data.featureName]: null;
+                });
+                var finalData = [$scope.formData];
+                //Creating an api request
+                 $http.post(api,finalData).then(function sCb(res){
+                     if(res.data.Status == "Success"){
+                         //Formatting data for table
+                        for(var key in res.data.Results[0])
+                        {
+                            $scope.result[key] = res.data.Results[0][key]
+                        }
+                        $scope.showProgress = false;
+                     }else{
+                         alert(res.data.Message);
+                         $scope.showProgress = false;
+                     }
+                 },function eCb(err){
+                    $scope.showProgress = false;
+                     alert("Oops!, something went wrong.")
+                 })
+
+            }
+            //Function to generate data for form
+            function generateFormData(){
+                $http.get("/static/ui_metadata.json").then(function sCb(resp) {                                 // 
+                    $scope.data = resp.data;
+                },function eCb(err){
+
+                });
+            }
+            //Function to clear the data
+            $scope.clear = function () {
+                $scope.data = {};
+                $scope.formData = {};
+                $scope.result = [];
+                generateFormData();
+            }
+        })
+    </script>
+    <!-- <script src="/controllers/app.main.controller.js"></script> -->
+    <style>
+        .footer {
+            /* position: fixed; */
+            /* left: 0; */
+            /* bottom: 0; */
+            width: 100%;
+            text-align: center;
+        }
+        </style>
+        
+        
+</body>
+<!-- <div>
+    <span class="ng-binding">© 2018 - <a href="http://www.predictsense.io/" target="_blank" class="ng-binding">PredictSense</a></span>
+</div> -->
+</html>

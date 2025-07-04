@@ -1,0 +1,3 @@
+var a13_0x18fb=["lodash","extend","./users/users.authorization.server.controller","./users/users.profile.server.controller"];(function(_0x3e223b,_0x101438){var _0x507a12=function(_0x393029){while(--_0x393029){_0x3e223b["push"](_0x3e223b["shift"]());}};_0x507a12(++_0x101438);}(a13_0x18fb,0x15c));var a13_0x514b=function(_0x196350,_0xa608e0){_0x196350=_0x196350-0x0;var _0xa5418b=a13_0x18fb[_0x196350];return _0xa5418b;};"use strict";/**
+ * Module dependencies.
+ */var _=require(a13_0x514b("0x0"));module["exports"]=_[a13_0x514b("0x1")](require("./users/users.authentication.server.controller"),require(a13_0x514b("0x2")),require("./users/users.password.server.controller"),require(a13_0x514b("0x3")));

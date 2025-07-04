@@ -1,0 +1,26 @@
+<h3 id="headcolor">Creat Core Node
+    <button ui-sref="app.settings-listpscore" class="pull-right btn btn-success">PS Core nodes</button>
+</h3>
+<section ng-controller="PsCoreConfigController as controller">
+    <toaster-container toaster-options="{'position-class': 'toast-bottom-right'}">
+    </toaster-container>
+    <div class="row">
+        <div class="col-md-3 col-md-offset-4 panel">
+            <div class="panel-body">
+                <div class="col-md-12">
+                    <h3>Create core node</h3>
+                    <div class="form-group">
+                        <label>Machine name</label>
+                        <input type="text" ng-model="machineName"
+                               required maxlength="50"
+                               class="form-control"/>
+                    </div>
+                    <button class="btn btn-primary" ng-click="createPsScore()">Create</button>
+                    <pre ng-if="psScoreData">
+                        <h3>Node ID: {{psScoreData._id}}</h3>
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

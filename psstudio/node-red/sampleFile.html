@@ -1,0 +1,24 @@
+<script type="text/javascript">
+    RED.nodes.registerType('NodeNameTag',{
+        category: 'default',
+        color: '#ffc04c',
+        defaults: {
+            replace: {value:""}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "file.png",
+        label: function() {
+            return this.replace || "NodeNameTag";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="NodeNameTag">
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Alias</label>
+        <input type="text" value="" style="width:110px;" id="node-input-replace">
+    </div>
+
+</script>

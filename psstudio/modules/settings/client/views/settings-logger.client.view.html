@@ -1,0 +1,403 @@
+<h3 id="headcolor">Settings
+    <!--<ul class="breadcrumb">-->
+        <!--<li><a ui-sref="app.dashboard">Dashboard</a>-->
+        <!--</li>-->
+        <!--<li ng-repeat="state in $state.$current.path" ng-switch="$last" ng-if="!state.abstract"-->
+            <!--ng-class="{active: $last}"><a ng-switch-when="false" href="#{{state.url.format($stateParams)}}">{{state.title}}</a>-->
+            <!--<span ng-switch-when="true" class="textcol">{{state.title}}</span>-->
+        <!--</li>-->
+    <!--</ul>-->
+</h3>
+<style>
+    .calendar-table {
+        background-color: #515253!important;
+    }
+    .daterangepicker td.off, .daterangepicker td.off.in-range, .daterangepicker td.off.start-date, .daterangepicker td.off.end-date{
+        background-color: #515253!important;
+    }
+    .daterangepicker .input-mini{
+        color: #fff!important;
+    }
+    .daterangepicker .calendar-time select{
+        width: 26%;
+        height: 32px;
+        padding: 1px 5px;
+        font-size: 14px;
+        line-height: 1.428571429;
+        color: #fff;
+        /* vertical-align: middle; */
+        background-color: #242a32;
+        background-image: none;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+        -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+        transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s
+    }
+    .c-checkbox input[type=checkbox]:checked + span{
+        border-color: #d3cb71;
+        background-color: #d3cb71;
+    }
+</style>
+
+<section ng-controller="SettingsLoggerController as controller">
+    <toaster-container toaster-options="{'position-class': 'toast-bottom-right'}">
+    </toaster-container>
+    <div class="row" ng-init="fetchPsCoreMachines()">
+        <div class="col-sm-4">
+            <form name="exportLogForm" class="form-validate">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <!--<span class="pull-right btn btn-primary btn-xs">PS Studio</span>-->
+                    </div>
+                    <div class="panel-body">
+                        <h3 class="text-center">PS Studio Logs</h3>
+                        <div class="col-md-12">
+                            <!--from Date-->
+                            <!--<div class="form-group">-->
+                                <!--<label>From</label>-->
+                                <!--<div class="controls">-->
+                                    <!--<p class="input-group">-->
+                                        <!--<input type="text" name="from" required readonly-->
+                                               <!--uib-datepicker-popup="{{controller.dateFormat}}"-->
+                                               <!--ng-model="exportOptions.from"-->
+                                               <!--is-open="controller.openedFrom"-->
+                                               <!--uib-datepicker-options="controller.dateOptions"-->
+                                               <!--close-text="Close" class="form-control"/>-->
+                                        <!--<span class="input-group-btn">-->
+                                             <!--<button type="button" ng-click="controller.openFrom($event)"-->
+                                                     <!--class="btn btn-default">-->
+                                                 <!--<em class="fa fa-calendar"></em>-->
+                                             <!--</button>-->
+                                        <!--</span>-->
+                                    <!--</p>-->
+                                    <!--<span ng-show="form.validateInput('date', 'required')" class="text-danger">This field is required</span>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--to Date-->
+                            <!--<div class="form-group">-->
+                                <!--<label>To</label>-->
+                                <!--<div class="controls">-->
+                                    <!--<p class="input-group">-->
+                                        <!--<input type="text" name="to" required readonly-->
+                                               <!--uib-datepicker-popup="{{controller.dateFormat}}"-->
+                                               <!--ng-model="exportOptions.until"-->
+                                               <!--is-open="controller.openedUntil"-->
+                                               <!--uib-datepicker-options="controller.dateOptions"-->
+                                               <!--close-text="Close" class="form-control"/>-->
+                                            <!--<span class="input-group-btn">-->
+                                            <!--<button type="button" ng-click="controller.openUntil($event)"-->
+                                                    <!--class="btn btn-default">-->
+                                                <!--<em class="fa fa-calendar"></em>-->
+                                            <!--</button>-->
+                                            <!--</span>-->
+                                    <!--</p>-->
+                                    <!--<span ng-show="form.validateInput('date', 'required')" class="text-danger">This field is required</span>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--from and to Date-->
+                            <div class="form-group">
+                                <label>From and To</label>
+                                <input date-range-picker class="form-control date-picker" type="text" options="opts" ng-model="exportOptions" />
+                            </div>
+
+                            <!--Limit-->
+                            <div class="form-group">
+                                <label>Limit</label>
+                                <input type="number" ng-model="exportOptions.limit"
+                                       onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+                                       required maxlength="4"
+                                       ng-pattern="/^[0-9]+$/"
+                                       class="form-control"/>
+                            </div>
+                            <!--Sort Logs-->
+                            <div class="form-group">
+                                <label>Sort</label>
+                                <select ng-model="exportOptions.order" required class="form-control">
+                                    <option value="asc">Ascending</option>
+                                    <option value="desc" selected>Descending</option>
+                                </select>
+                            </div>
+                            <!--Prettify logs-->
+                            <div class="form-group">
+                                <div class="checkbox c-checkbox">
+                                    <label>
+                                        <input type="checkbox" name="prettify"
+                                               ng-model="prettify"/>
+                                        <span class="fa fa-check"></span>Prettify</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <button ng-click="exportLogs(exportLogForm.$valid)" type="submit"
+                                            class="btn btn-labeled btn-primary">
+                                 <span class="btn-label"><i class="fa fa-download"></i>
+                                        </span>Export
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+        <div class="col-sm-4">
+            <form name="psCoreLogForm" class="form-validate">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <!--<span class="pull-right btn btn-primary btn-xs">PS Core</span>-->
+                    </div>
+                    <div class="panel-body ">
+                        <h3 class="text-center">PS Core Logs</h3>
+                        <div class="form-group">
+                            <label>Select Node</label>
+                            <select ng-model="PsCoreExportOptions.machineId" required class="form-control">
+                                <option selected>Select a node</option>
+                                <option ng-repeat="machine in machines" value="{{machine._id}}">{{machine.machineName}}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <button ng-click="exportPsCoreLogs(psCoreLogForm.$valid)" type="submit"
+                                            class="btn btn-labeled btn-primary">
+                                 <span class="btn-label"><i class="fa fa-download"></i>
+                                        </span>Export
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-4">
+            <form name="osLogForm" class="form-validate">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <!--<span class="pull-right btn btn-primary btn-xs">PS Studio</span>-->
+                    </div>
+                    <div class="panel-body ">
+                        <h3 class="text-center">Operating System Logs</h3>
+                        <div class="col-md-12">
+                            <!--from Date-->
+                            <!--<div class="form-group">-->
+                                <!--<label>From</label>-->
+                                <!--<div class="controls">-->
+                                    <!--<p class="input-group">-->
+
+                                        <!--<input type="text" name="OSfrom" required readonly-->
+                                               <!--uib-datepicker-popup="{{controller.dateFormat}}"-->
+                                               <!--ng-model="OSExportOptions.from"-->
+                                               <!--is-open="controller.openedOSFrom"-->
+                                               <!--uib-datepicker-options="controller.dateOptions"-->
+                                               <!--close-text="Close" class="form-control"/>-->
+                                        <!--<span class="input-group-btn">-->
+                                             <!--<button type="button" ng-click="controller.openOSFrom($event)"-->
+                                                     <!--class="btn btn-default">-->
+                                                 <!--<em class="fa fa-calendar"></em>-->
+                                             <!--</button>-->
+                                        <!--</span>-->
+                                    <!--</p>-->
+                                    <!--<span ng-show="form.validateInput('date', 'required')" class="text-danger">This field is required</span>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--to Date-->
+                            <!--<div class="form-group">-->
+                                <!--<label>To</label>-->
+                                <!--<div class="controls">-->
+                                    <!--<p class="input-group">-->
+                                        <!--<input type="text" name="to" required readonly-->
+                                               <!--uib-datepicker-popup="{{controller.dateFormat}}"-->
+                                               <!--ng-model="OSExportOptions.until"-->
+                                               <!--is-open="controller.openedOSUntil"-->
+                                               <!--uib-datepicker-options="controller.dateOptions"-->
+                                               <!--close-text="Close" class="form-control"/>-->
+                                            <!--<span class="input-group-btn">-->
+                                            <!--<button type="button" ng-click="controller.openOSUntil($event)"-->
+                                                    <!--class="btn btn-default">-->
+                                                <!--<em class="fa fa-calendar"></em>-->
+                                            <!--</button>-->
+                                            <!--</span>-->
+                                    <!--</p>-->
+                                    <!--<span ng-show="form.validateInput('date', 'required')" class="text-danger">This field is required</span>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <div class="form-group">
+                                <label>From and To</label>
+                                <input date-range-picker class="form-control date-picker" type="text" options="opts" ng-model="OSExportOptions" />
+                            </div>
+
+
+                            <!--Sort Logs-->
+                            <div class="form-group">
+                                <label>Sort</label>
+                                <select ng-model="OSExportOptions.order" required class="form-control">
+                                    <option value="asc">Ascending</option>
+                                    <option value="desc" selected>Descending</option>
+                                </select>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <button ng-click="exportOSLogs(osLogForm.$valid)" type="submit"
+                                            class="btn btn-labeled btn-primary">
+                                 <span class="btn-label"><i class="fa fa-download"></i>
+                                        </span>Export
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <!--<form name="routelogForm" class="form-validate">-->
+                <!--<div class="panel panel-default">-->
+                    <!--<div class="panel-body ">-->
+                        <!--<legend>Route Access Logs</legend>-->
+                        <!--<div class="form-group text-center">-->
+                            <!--<button ng-click="exportRouteAccessLogs()"-->
+                                    <!--class="btn btn-labeled btn-primary">-->
+                                 <!--<span class="btn-label"><i class="fa fa-download"></i>-->
+                                        <!--</span>Export-->
+                            <!--</button>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</form>-->
+        <!--</div>-->
+        <!--<div>-->
+
+            <!--<form name="loggerSettingsForm" class="form-validate"-->
+                  <!--ng-submit="saveLoggerSettings(loggerSettingsForm.$valid)" ng-init="loadLoggerSettings()">-->
+                <!--<div class="col-sm-4">-->
+                    <!--<div class="panel panel-default">-->
+                        <!--<div class="panel-body ">-->
+                            <!--<legend>Logger Settings-->
+                                <!--<div class="pull-right"><i class="fa fa-cog " aria-hidden="true"></i>-->
+                                <!--</div>-->
+                            <!--</legend>-->
+                            <!--<fieldset>-->
+                                <!--<div class="col-md-12">-->
+                                    <!--&lt;!&ndash;max Size to keep logs&ndash;&gt;-->
+                                    <!--<div class="form-group">-->
+                                        <!--<label>Keep file of max. size &nbsp;(MB)</label>-->
+                                        <!--<input type="number" byter ng-model="loggerSettings.maxFileSize"-->
+                                               <!--placeholder="Size in MB"-->
+                                               <!--onkeypress='return event.charCode >= 48 && event.charCode <= 57'-->
+                                               <!--required=""-->
+                                               <!--ng-pattern="/^[0-9]+$/"-->
+                                               <!--class="form-control"/>-->
+                                    <!--</div>-->
+                                    <!--&lt;!&ndash;max File count to keep &ndash;&gt;-->
+                                    <!--<div class="form-group">-->
+                                        <!--<label>Keep max no.of files</label>-->
+                                        <!--<input type="text" ng-model="loggerSettings.maxFileCount"-->
+                                               <!--placeholder="Enter max no. of files to keep"-->
+                                               <!--onkeypress='return event.charCode >= 48 && event.charCode <= 57'-->
+                                               <!--required="" maxlength="2"-->
+                                               <!--ng-pattern="/^[0-9]+$/"-->
+                                               <!--class="form-control"/>&nbsp;-->
+                                    <!--</div>-->
+                                    <!--<div class="form-group ">-->
+                                        <!--<button type="submit" class="btn btn-labeled btn-primary">-->
+                                 <!--<span class="btn-label"><i class="fa fa-floppy-o"></i>-->
+                                        <!--</span>Save-->
+                                        <!--</button>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</fieldset>-->
+                            <!--<legend>Repair Logs-->
+                                <!--<div class="pull-right">-->
+                                    <!--<i class="fa fa-wrench" aria-hidden="true"></i>-->
+                                <!--</div>-->
+                            <!--</legend>-->
+                            <!--<div class="form-group text-center">-->
+                                <!--<button type="button" ng-click="repairLogs()"-->
+                                        <!--class="btn btn-labeled btn-primary">-->
+                                 <!--<span class="btn-label"><i class="fa fa-check-square-o"></i>-->
+                                        <!--</span>Repair-->
+                                <!--</button>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</form>-->
+        <!--</div>-->
+    </div>
+            <!--<form name="routelogForm" class="form-validate">-->
+            <!--<div class="panel panel-default">-->
+            <!--<div class="panel-body ">-->
+            <!--<legend>Route Access Logs</legend>-->
+            <!--<div class="form-group text-center">-->
+            <!--<button ng-click="exportRouteAccessLogs()"-->
+            <!--class="btn btn-labeled btn-primary">-->
+            <!--<span class="btn-label"><i class="fa fa-download"></i>-->
+            <!--</span>Export-->
+            <!--</button>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</form>-->
+            <!--</div>-->
+            <!--<div>-->
+
+            <!--<form name="loggerSettingsForm" class="form-validate"-->
+            <!--ng-submit="saveLoggerSettings(loggerSettingsForm.$valid)" ng-init="loadLoggerSettings()">-->
+            <!--<div class="col-sm-4">-->
+            <!--<div class="panel panel-default">-->
+            <!--<div class="panel-body ">-->
+            <!--<legend>Logger Settings-->
+            <!--<div class="pull-right"><i class="fa fa-cog " aria-hidden="true"></i>-->
+            <!--</div>-->
+            <!--</legend>-->
+            <!--<fieldset>-->
+            <!--<div class="col-md-12">-->
+            <!--&lt;!&ndash;max Size to keep logs&ndash;&gt;-->
+            <!--<div class="form-group">-->
+            <!--<label>Keep file of max. size &nbsp;(MB)</label>-->
+            <!--<input type="number" byter ng-model="loggerSettings.maxFileSize"-->
+            <!--placeholder="Size in MB"-->
+            <!--onkeypress='return event.charCode >= 48 && event.charCode <= 57'-->
+            <!--required=""-->
+            <!--ng-pattern="/^[0-9]+$/"-->
+            <!--class="form-control"/>-->
+            <!--</div>-->
+            <!--&lt;!&ndash;max File count to keep &ndash;&gt;-->
+            <!--<div class="form-group">-->
+            <!--<label>Keep max no.of files</label>-->
+            <!--<input type="text" ng-model="loggerSettings.maxFileCount"-->
+            <!--placeholder="Enter max no. of files to keep"-->
+            <!--onkeypress='return event.charCode >= 48 && event.charCode <= 57'-->
+            <!--required="" maxlength="2"-->
+            <!--ng-pattern="/^[0-9]+$/"-->
+            <!--class="form-control"/>&nbsp;-->
+            <!--</div>-->
+            <!--<div class="form-group ">-->
+            <!--<button type="submit" class="btn btn-labeled btn-primary">-->
+            <!--<span class="btn-label"><i class="fa fa-floppy-o"></i>-->
+            <!--</span>Save-->
+            <!--</button>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</fieldset>-->
+            <!--<legend>Repair Logs-->
+            <!--<div class="pull-right">-->
+            <!--<i class="fa fa-wrench" aria-hidden="true"></i>-->
+            <!--</div>-->
+            <!--</legend>-->
+            <!--<div class="form-group text-center">-->
+            <!--<button type="button" ng-click="repairLogs()"-->
+            <!--class="btn btn-labeled btn-primary">-->
+            <!--<span class="btn-label"><i class="fa fa-check-square-o"></i>-->
+            <!--</span>Repair-->
+            <!--</button>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</form>-->
+            <!--</div>-->
+        </div>
+</section>
