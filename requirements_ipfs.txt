@@ -1,7 +1,32 @@
 # PeerAI - IPFS Training and Sharing System Requirements
+# متطلبات نظام التدريب والمشاركة على IPFS لـ PeerAI
+
+# Core ML and Data Processing
 torch>=1.9.0
+torchvision>=0.10.0
+torchaudio>=0.9.0
 scikit-learn>=1.0.0
 pandas>=1.3.0
 numpy>=1.21.0
 joblib>=1.1.0
-ipfshttpclient>=0.8.0
+
+# IPFS Integration
+ipfshttpclient>=0.8.0a2
+
+# CLI and Utilities
+click>=8.0.0
+pathlib2>=2.3.0
+
+# Async Support
+asyncio-mqtt>=0.10.0
+
+# Security and Cryptography
+cryptography>=3.4.0
+hashlib-compat>=1.0.0
+
+# Data Formats
+json5>=0.9.0
+
+# Optional: Enhanced Features
+transformers>=4.0.0  # For advanced NLP models
+datasets>=1.0.0      # For dataset management
