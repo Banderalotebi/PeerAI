@@ -1,0 +1,65 @@
+# PeerAI Docker Image with IPFS Integration
+FROM python:3.11-slim
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    git \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install IPFS
+RUN wget https://dist.ipfs.tech/go-ipfs/v0.23.0/go-ipfs_v0.23.0_linux-amd64.tar.gz \
+    && tar -xvzf go-ipfs_v0.23.0_linux-amd64.tar.gz \
+    && cd go-ipfs \
+    && bash install.sh \
+    && cd .. \
+    && rm -rf go-ipfs go-ipfs_v0.23.0_linux-amd64.tar.gz
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements first for better caching
+COPY requirements_ipfs.txt requirements.txt
+COPY requirements_p2p_ai.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt \
+    && pip install --no-cache-dir -r requirements_p2p_ai.txt
+
+# Copy application code
+COPY . .
+
+# Create necessary directories
+RUN mkdir -p /app/models /app/sample_data /app/.peerai_ipfs
+
+# Initialize IPFS
+RUN ipfs init --profile=server
+
+# Create startup script
+RUN echo '#!/bin/bash\n\
+# Start IPFS daemon in background\n\
+ipfs daemon --enable-pubsub-experiment &\n\
+\n\
+# Wait for IPFS to be ready\n\
+sleep 10\n\
+\n\
+# Start PeerAI application\n\
+python app.py\n\
+' > /app/start.sh && chmod +x /app/start.sh
+
+# Expose ports
+EXPOSE 8000 8001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Start the application
+CMD ["/app/start.sh"] 
